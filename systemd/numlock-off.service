@@ -1,0 +1,12 @@
+[Unit]
+Description=Disable NumLock at boot
+After=systemd-vconsole-setup.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'for led in /sys/class/leds/*::numlock/brightness; do echo 0 > "$led"; done'
+ExecStart=/bin/sh -c 'for tty in /dev/tty1 /dev/tty2 /dev/tty3; do setleds -D -num < "$tty" 2>/dev/null; done'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

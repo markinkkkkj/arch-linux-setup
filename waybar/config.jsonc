@@ -1,0 +1,94 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 32,
+    "spacing": 0,
+
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right": [
+        "cpu",
+        "custom/sep",
+        "memory",
+        "custom/sep",
+        "backlight",
+        "custom/sep",
+        "pulseaudio",
+        "custom/sep",
+        "network",
+        "custom/sep",
+        "battery",
+        "custom/sep",
+        "tray"
+    ],
+
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "active": "●",
+            "default": "○"
+        },
+        "persistent_workspaces": {
+            "*": 5
+        }
+    },
+
+    "clock": {
+        "format": "⏱ {:%H:%M}",
+        "format-alt": "📅 {:%d/%m/%Y   %H:%M}",
+        "tooltip-format": "<tt><small>{calendar}</small></tt>"
+    },
+
+    "cpu": {
+        "format": "⚙ CPU {usage}%",
+        "interval": 2,
+        "tooltip": false
+    },
+
+    "memory": {
+        "format": "▣ MEM {used:.1f}G",
+        "interval": 5,
+        "tooltip-format": "{used:.1f}G usados de {total:.1f}G"
+    },
+
+    "backlight": {
+        "format": "☀ {percent}%",
+        "tooltip": false
+    },
+
+    "pulseaudio": {
+        "format": "♪ {volume}%",
+        "format-muted": "✕ mudo",
+        "on-click": "pavucontrol",
+        "tooltip": false
+    },
+
+    "network": {
+        "format-wifi": "⌘ {signalStrength}%",
+        "format-ethernet": "⌘ {ipaddr}",
+        "format-disconnected": "✕ off",
+        "tooltip-format-wifi": "{essid}  {signalStrength}%\n{ipaddr}",
+        "tooltip-format-ethernet": "{ifname}  {ipaddr}"
+    },
+
+    "battery": {
+        "format": "▸ BAT {capacity}%",
+        "format-charging": "↯ {capacity}%",
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "tooltip-format": "{timeTo}"
+    },
+
+    "tray": {
+        "icon-size": 14,
+        "spacing": 8
+    },
+
+    "custom/sep": {
+        "format": "|",
+        "interval": "once",
+        "tooltip": false
+    }
+}

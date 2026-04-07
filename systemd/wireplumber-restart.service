@@ -1,0 +1,17 @@
+[Unit]
+Description=Fix audio profile on boot (Intel SOF boot race)
+After=wireplumber.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/bash -c '\
+    sleep 2 && \
+    systemctl --user restart wireplumber && \
+    sleep 1 && \
+    pactl set-card-profile \
+        $(pactl list cards short | awk "/skl_hda_dsp_generic/{print \$2}") \
+        "HiFi (HDMI1, HDMI2, HDMI3, Mic1, Mic2, Speaker)"'
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,83 @@
+* {
+    background: transparent;
+    color: #cccccc;
+    font-family: JetBrainsMono Nerd Font, Noto Color Emoji;
+    font-size: 13px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+    transition: all 0.2s ease;
+}
+
+window#waybar {
+    background: #1a1a1a;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+/* ── Workspaces ── */
+#workspaces {
+    padding: 0 4px;
+}
+
+#workspaces button {
+    padding: 0 8px;
+    color: #444444;
+    background: transparent;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+}
+
+#workspaces button.active {
+    color: #eeeeee;
+    border-bottom: 2px solid #888888;
+}
+
+#workspaces button:hover {
+    background: #242424;
+    color: #aaaaaa;
+}
+
+/* ── Módulos gerais ── */
+#clock,
+#cpu,
+#memory,
+#backlight,
+#pulseaudio,
+#network,
+#battery,
+#tray {
+    padding: 0 14px;
+    color: #cccccc;
+}
+
+/* ── Clock ── */
+#clock {
+    color: #eeeeee;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* ── Separador ── */
+#custom-sep {
+    color: #2e2e2e;
+    padding: 0;
+    font-size: 16px;
+}
+
+/* ── Bateria ── */
+#battery.warning {
+    color: #999999;
+}
+
+#battery.critical {
+    color: #777777;
+    animation: blink 1s step-end infinite;
+}
+
+#battery.charging {
+    color: #dddddd;
+}
+
+@keyframes blink {
+    50% { color: #444444; }
+}

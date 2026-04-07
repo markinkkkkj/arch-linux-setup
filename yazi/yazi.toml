@@ -1,0 +1,35 @@
+[manager]
+ratio          = [1, 3, 4]   # proporção painel esquerdo:centro:prévia
+sort_by        = "natural"
+sort_sensitive = false
+sort_reverse   = false
+sort_dir_first = true
+linemode       = "size"
+show_hidden    = false
+show_symlink   = true
+
+[preview]
+tab_size       = 2
+max_width      = 600
+max_height     = 900
+cache_dir      = ""
+
+[opener]
+edit = [
+    { run = 'gedit "$@"', desc = "Editar", orphan = true },
+]
+sudo-edit = [
+    { run = 'kitty sudo nvim "$@"', desc = "Editar como sudo", orphan = true },
+]
+open = [
+    { run = 'xdg-open "$@"', desc = "Abrir", orphan = true },
+]
+
+[open]
+rules = [
+    { name = "*/", use = "open" },
+    { mime = "text/*",            use = "edit" },
+    { mime = "application/json",  use = "edit" },
+    { mime = "inode/x-empty",     use = "edit" },
+    { mime = "*",                 use = "open" },
+]

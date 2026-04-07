@@ -1,0 +1,185 @@
+# ──────────────────────────────────────────────
+#  Yazi – keymap personalizado
+#  prepend_keymap: sobrescreve os defaults sem apagar os demais
+# ──────────────────────────────────────────────
+
+# ── Navegação ─────────────────────────────────
+[[mgr.prepend_keymap]]
+on  = ["h"]
+run = "leave"
+desc = "Voltar ao diretório pai"
+
+[[mgr.prepend_keymap]]
+on  = ["l"]
+run = "enter"
+desc = "Entrar no diretório / abrir arquivo"
+
+[[mgr.prepend_keymap]]
+on  = ["j"]
+run = "arrow 1"
+desc = "Mover para baixo"
+
+[[mgr.prepend_keymap]]
+on  = ["k"]
+run = "arrow -1"
+desc = "Mover para cima"
+
+[[mgr.prepend_keymap]]
+on  = ["J"]
+run = "arrow 5"
+desc = "Mover 5 itens para baixo"
+
+[[mgr.prepend_keymap]]
+on  = ["K"]
+run = "arrow -5"
+desc = "Mover 5 itens para cima"
+
+[[mgr.prepend_keymap]]
+on  = ["g", "g"]
+run = "arrow -99999999"
+desc = "Ir para o início"
+
+[[mgr.prepend_keymap]]
+on  = ["G"]
+run = "arrow 99999999"
+desc = "Ir para o final"
+
+# ── Seleção ───────────────────────────────────
+[[mgr.prepend_keymap]]
+on  = ["<Space>"]
+run = "select --state=none"
+desc = "Selecionar/deselecionar item"
+
+[[mgr.prepend_keymap]]
+on  = ["v"]
+run = "visual_mode"
+desc = "Modo visual (seleção múltipla)"
+
+[[mgr.prepend_keymap]]
+on  = ["V"]
+run = "select_all --state=none"
+desc = "Selecionar/deselecionar tudo"
+
+[[mgr.prepend_keymap]]
+on  = ["<Esc>"]
+run = ["escape", "select_all --state=false"]
+desc = "Cancelar / limpar seleção"
+
+# ── Copiar / Recortar / Colar ─────────────────
+[[mgr.prepend_keymap]]
+on  = ["y"]
+run = "yank"
+desc = "Copiar arquivo(s)"
+
+[[mgr.prepend_keymap]]
+on  = ["x"]
+run = "yank --cut"
+desc = "Recortar arquivo(s)"
+
+[[mgr.prepend_keymap]]
+on  = ["p"]
+run = "paste"
+desc = "Colar (mantém original se nome colidir)"
+
+[[mgr.prepend_keymap]]
+on  = ["P"]
+run = "paste --force"
+desc = "Colar (sobrescreve se nome colidir)"
+
+[[mgr.prepend_keymap]]
+on  = ["Y"]
+run = "unyank"
+desc = "Cancelar cópia/recorte pendente"
+
+# ── Operações de arquivo ──────────────────────
+[[mgr.prepend_keymap]]
+on  = ["a"]
+run = "create"
+desc = "Criar arquivo ou pasta (termine com / para pasta)"
+
+[[mgr.prepend_keymap]]
+on  = ["r"]
+run = "rename --cursor=before_ext"
+desc = "Renomear (cursor antes da extensão)"
+
+[[mgr.prepend_keymap]]
+on  = ["d"]
+run = "remove"
+desc = "Mover para lixeira"
+
+[[mgr.prepend_keymap]]
+on  = ["D"]
+run = "remove --permanently"
+desc = "Excluir permanentemente"
+
+[[mgr.prepend_keymap]]
+on  = ["c", "p"]
+run = "copy path"
+desc = "Copiar caminho absoluto para o clipboard"
+
+[[mgr.prepend_keymap]]
+on  = ["c", "n"]
+run = "copy filename"
+desc = "Copiar nome do arquivo para o clipboard"
+
+# ── Busca / Filtro ────────────────────────────
+[[mgr.prepend_keymap]]
+on  = ["/"]
+run = "find --smart"
+desc = "Buscar (smart-case)"
+
+[[mgr.prepend_keymap]]
+on  = ["n"]
+run = "find_arrow"
+desc = "Próximo resultado da busca"
+
+[[mgr.prepend_keymap]]
+on  = ["N"]
+run = "find_arrow --previous"
+desc = "Resultado anterior da busca"
+
+[[mgr.prepend_keymap]]
+on  = ["f"]
+run = "filter --smart"
+desc = "Filtrar lista (smart-case)"
+
+# ── Visualização ──────────────────────────────
+[[mgr.prepend_keymap]]
+on  = ["."]
+run = "hidden toggle"
+desc = "Mostrar/ocultar arquivos ocultos"
+
+[[mgr.prepend_keymap]]
+on  = ["<Enter>"]
+run = "open"
+desc = "Abrir com o programa padrão"
+
+[[mgr.prepend_keymap]]
+on  = ["<S-Enter>"]
+run = "shell -- kitty sudo nvim %s"
+desc = "Editar como sudo"
+
+[[mgr.prepend_keymap]]
+on  = ["e"]
+run = "shell -- kitty sudo nvim %s"
+desc = "Editar como sudo (teste)"
+
+[[mgr.prepend_keymap]]
+on  = ["<Tab>"]
+run = "tab_switch 1 --relative"
+desc = "Próxima aba"
+
+[[mgr.prepend_keymap]]
+on  = ["<S-Tab>"]
+run = "tab_switch -1 --relative"
+desc = "Aba anterior"
+
+[[mgr.prepend_keymap]]
+on  = ["t"]
+run = "tab_create --current"
+desc = "Nova aba no diretório atual"
+
+[[mgr.prepend_keymap]]
+on  = ["q"]
+run = "quit"
+desc = "Sair do yazi"
