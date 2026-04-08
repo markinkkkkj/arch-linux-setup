@@ -24,19 +24,15 @@ info "Iniciando setup do Hyprland..."
 info "Atualizando sistema..."
 sudo pacman -Syu --noconfirm
 
-# ── 2. Instalar zsh e configurar como shell padrão ──────────
-info "Instalando zsh..."
-sudo pacman -S --needed --noconfirm \
-    zsh \
-    zsh-autosuggestions \
-    zsh-syntax-highlighting
+# ── 2. Configurar bash ──────────────────────────────────────
+info "Configurando bash..."
+sudo pacman -S --needed --noconfirm bash-completion
 
-info "Configurando zsh..."
-cp "$DOTFILES_DIR/zsh/.zshrc" ~/.zshrc
+cp "$DOTFILES_DIR/bash/.bashrc" ~/.bashrc
 
-if [[ "$SHELL" != "$(which zsh)" ]]; then
-    info "Definindo zsh como shell padrão..."
-    chsh -s "$(which zsh)"
+if [[ "$SHELL" != "$(which bash)" ]]; then
+    info "Definindo bash como shell padrão..."
+    chsh -s "$(which bash)"
 fi
 
 # ── 3. Instalar dependências base ────────────────────────────
@@ -57,7 +53,7 @@ sudo pacman -S --needed --noconfirm \
     eog gedit neovim \
     yazi \
     zram-generator \
-    efibootmgr refind \
+    efibootmgr refind gnu-efi \
     nvm
 
 # ── 4. Instalar yay (AUR helper) ─────────────────────────────
@@ -152,17 +148,17 @@ if [[ -z "$REFIND_DIR" ]]; then
     exit 1
 fi
 
-# Instala o tema darkmini
-THEME_DIR="$REFIND_DIR/themes/darkmini"
+# Instala o tema refind-jwyn
+THEME_DIR="$REFIND_DIR/themes/refind-jwyn"
 if [[ -d "$THEME_DIR/.git" ]]; then
-    info "Atualizando tema darkmini..."
+    info "Atualizando tema refind-jwyn..."
     sudo git -C "$THEME_DIR" pull --ff-only
 elif [[ -d "$THEME_DIR" ]]; then
     info "Pasta do tema já existe (sem git), pulando."
 else
-    info "Clonando tema darkmini..."
+    info "Clonando tema refind-jwyn..."
     sudo mkdir -p "$REFIND_DIR/themes"
-    sudo git clone https://github.com/LightAir/darkmini.git "$THEME_DIR"
+    sudo git clone https://github.com/markinkkkkj/refind-jwyn.git "$THEME_DIR"
 fi
 
 # Detecta UUID da partição root e kernel mais recente
@@ -178,20 +174,27 @@ KERNEL_VER="${KERNEL_PATH#/boot/vmlinuz-}"
 REFIND_CONF="$REFIND_DIR/refind.conf"
 
 # Ativa o tema no refind.conf
-if ! grep -q "include themes/darkmini/theme.conf" "$REFIND_CONF"; then
-    echo -e "\ninclude themes/darkmini/theme.conf" | sudo tee -a "$REFIND_CONF" > /dev/null
-    info "Tema darkmini ativado no rEFInd."
+if ! grep -q "include themes/refind-jwyn/theme.conf" "$REFIND_CONF"; then
+    echo -e "\ninclude themes/refind-jwyn/theme.conf" | sudo tee -a "$REFIND_CONF" > /dev/null
+    info "Tema refind-jwyn ativado no rEFInd."
 else
-    info "Tema darkmini já está ativado, pulando."
+    info "Tema refind-jwyn já está ativado, pulando."
 fi
 
-# Esconde a barra de ferramentas (shutdown, reboot, etc.)
-if ! grep -q "^showtools" "$REFIND_CONF"; then
-    echo -e "\nshowtools" | sudo tee -a "$REFIND_CONF" > /dev/null
-    info "Barra de tools desabilitada no rEFInd."
-else
-    info "showtools já configurado, pulando."
-fi
+# Esconde a barra de ferramentas e outros elementos da UI.
+# `hideui tools` NÃO é opção válida do rEFInd — para esconder a barra de tools
+# o correto é `showtools` sem argumentos (lista vazia = barra invisível).
+# `hideui` aqui sobrescreve o do theme.conf, por isso replica os demais valores.
+# Ambos devem vir APÓS o include do tema para ter precedência.
+sudo sed -i '/^showtools/d' "$REFIND_CONF"
+sudo sed -i '/^hideui/d' "$REFIND_CONF"
+# Insere em ordem reversa (cada /a insere logo após o include), resultado final:
+#   include ...
+#   hideui badges,arrows,hints,label
+#   showtools
+sudo sed -i '/^include themes\/refind-jwyn\/theme.conf/a showtools' "$REFIND_CONF"
+sudo sed -i '/^include themes\/refind-jwyn\/theme.conf/a hideui badges,arrows,hints,label' "$REFIND_CONF"
+info "UI do rEFInd configurada (barra de tools desabilitada, badges/labels ocultos)."
 
 # Desabilita auto-scan do Windows para controlar a ordem de exibição.
 # Sem isso, entradas auto-detectadas aparecem antes das entradas manuais.
@@ -219,7 +222,7 @@ if [[ -n "$WIN_LOADER" ]]; then
     WIN_STANZA=$(cat <<EOF
 
 menuentry "Windows" {
-    icon    themes/darkmini/icons/os_win.png
+    icon    themes/refind-jwyn/icons/os_win.png
     loader  ${WIN_LOADER}
 }
 EOF
@@ -237,8 +240,7 @@ fi
 STANZA=$(cat <<EOF
 
 menuentry "Arch Linux" {
-    icon     themes/darkmini/icons/os_arch.png
-    volume   "Arch Linux"
+    icon     themes/refind-jwyn/icons/os_arch.png
     loader   /vmlinuz-${KERNEL_VER}
     initrd   /initramfs-${KERNEL_VER}.img
     options  "root=UUID=${ROOT_UUID} rw quiet splash"
