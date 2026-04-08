@@ -1,2 +1,1 @@
-# trialboot-setup
-# trialboot-setup
+# My Personal Arch Linux setup script
