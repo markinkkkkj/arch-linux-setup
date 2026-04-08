@@ -58,6 +58,10 @@ zle -N deselect-backward-char
 zle -N deselect-forward-word
 zle -N deselect-backward-word
 
+# Integração com zsh-autosuggestions: wrappear nossos widgets também
+ZSH_AUTOSUGGEST_ACCEPT_WIDGETS+=(deselect-forward-char)
+ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(deselect-forward-word)
+
 bindkey '^[[C'     deselect-forward-char   # Direita
 bindkey '^[[D'     deselect-backward-char  # Esquerda
 bindkey '^[[1;5C'  deselect-forward-word   # Ctrl+Direita

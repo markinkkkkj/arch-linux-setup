@@ -40,7 +40,15 @@
       "Read(//usr/share/**)",
       "Bash(yazi --debug)",
       "Bash(pacman -Ql yazi)",
-      "WebFetch(domain:yazi-rs.github.io)"
+      "WebFetch(domain:yazi-rs.github.io)",
+      "Bash(sudo rm:*)",
+      "Bash(identify /boot/EFI/refind/themes/refind-jwyn/icons/os_arch.png /boot/EFI/refind/themes/refind-jwyn/icons/os_win.png)",
+      "Bash(file /boot/EFI/refind/themes/refind-jwyn/icons/*.png)",
+      "Bash(sudo blkid:*)",
+      "Bash(lsblk -o NAME,FSTYPE,LABEL,PARTLABEL,MOUNTPOINT /dev/nvme0n1)",
+      "Bash(lsblk -o NAME,FSTYPE,LABEL,PARTLABEL,MOUNTPOINT)",
+      "Bash(findmnt -n -o UUID /)",
+      "Bash(ls /boot/vmlinuz-*)"
     ]
   }
 }

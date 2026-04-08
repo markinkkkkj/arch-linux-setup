@@ -39,7 +39,8 @@ The script runs 11 sequential steps, each announced with colored log output:
 
 - **Idempotency**: `command -v`, `grep` checks, and directory existence tests guard every install/clone step — safe to re-run
 - **Kernel detection**: use `ls /boot/vmlinuz-*` and strip the prefix manually; never use `xargs basename` on a glob (may be empty)
-- **rEFInd `showtools`**: the `tools` directive in `refind.conf` controls the bottom shutdown/reboot bar, not the `tool_*.png` icon files
+- **rEFInd tools bar**: use `showtools` with no arguments to hide the bottom shutdown/reboot bar; `hideui tools` is NOT a valid option and is silently ignored. `hideui` only accepts: `banner`, `label`, `singleuser`, `hints`, `arrows`, `badges`, `hwtest`, `progbar`, `editor`
+- **rEFInd `volume`**: when the kernel lives on the EFI partition (i.e. `/boot` is the EFI mount), omit `volume` entirely — specifying a device name like `"nvme0n1p1"` won't match (rEFInd matches filesystem labels or GPT partition labels, not device paths)
 - **Heredoc configs**: multi-line service files and rEFInd stanzas are written with `cat <<EOF`
 - **Path substitution**: `sed "s|/home/[^/]*/|$HOME/|g"` normalizes hardcoded paths in configs
 

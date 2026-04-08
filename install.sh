@@ -53,7 +53,7 @@ sudo pacman -S --needed --noconfirm \
     eog gedit neovim \
     yazi \
     zram-generator \
-    efibootmgr refind gnu-efi \
+    efibootmgr \
     nvm
 
 # ── 4. Instalar yay (AUR helper) ─────────────────────────────
@@ -128,140 +128,7 @@ sudo cp "$DOTFILES_DIR/systemd/numlock-on.service" \
 sudo systemctl daemon-reload
 sudo systemctl enable numlock-on.service
 
-# ── 10. Configurar rEFInd ────────────────────────────────────
-info "Instalando e configurando rEFInd..."
-
-# Instala o rEFInd na partição EFI
-sudo refind-install
-
-# Detecta o diretório do rEFInd (varia por distro/firmware)
-REFIND_DIR=""
-for candidate in /boot/EFI/refind /boot/efi/EFI/refind /efi/EFI/refind; do
-    if [[ -d "$candidate" ]]; then
-        REFIND_DIR="$candidate"
-        break
-    fi
-done
-
-if [[ -z "$REFIND_DIR" ]]; then
-    error "Diretório do rEFInd não encontrado. Verifique se o refind-install foi executado."
-    exit 1
-fi
-
-# Instala o tema refind-jwyn
-THEME_DIR="$REFIND_DIR/themes/refind-jwyn"
-if [[ -d "$THEME_DIR/.git" ]]; then
-    info "Atualizando tema refind-jwyn..."
-    sudo git -C "$THEME_DIR" pull --ff-only
-elif [[ -d "$THEME_DIR" ]]; then
-    info "Pasta do tema já existe (sem git), pulando."
-else
-    info "Clonando tema refind-jwyn..."
-    sudo mkdir -p "$REFIND_DIR/themes"
-    sudo git clone https://github.com/markinkkkkj/refind-jwyn.git "$THEME_DIR"
-fi
-
-# Detecta UUID da partição root e kernel mais recente
-ROOT_UUID=$(findmnt -n -o UUID /)
-
-KERNEL_PATH=$(ls /boot/vmlinuz-* 2>/dev/null | sort -V | tail -1)
-if [[ -z "$KERNEL_PATH" ]]; then
-    error "Nenhum kernel encontrado em /boot. Verifique a instalação."
-    exit 1
-fi
-KERNEL_VER="${KERNEL_PATH#/boot/vmlinuz-}"
-
-REFIND_CONF="$REFIND_DIR/refind.conf"
-
-# Ativa o tema no refind.conf
-if ! grep -q "include themes/refind-jwyn/theme.conf" "$REFIND_CONF"; then
-    echo -e "\ninclude themes/refind-jwyn/theme.conf" | sudo tee -a "$REFIND_CONF" > /dev/null
-    info "Tema refind-jwyn ativado no rEFInd."
-else
-    info "Tema refind-jwyn já está ativado, pulando."
-fi
-
-# Esconde a barra de ferramentas e outros elementos da UI.
-# `hideui tools` NÃO é opção válida do rEFInd — para esconder a barra de tools
-# o correto é `showtools` sem argumentos (lista vazia = barra invisível).
-# `hideui` aqui sobrescreve o do theme.conf, por isso replica os demais valores.
-# Ambos devem vir APÓS o include do tema para ter precedência.
-sudo sed -i '/^showtools/d' "$REFIND_CONF"
-sudo sed -i '/^hideui/d' "$REFIND_CONF"
-# Insere em ordem reversa (cada /a insere logo após o include), resultado final:
-#   include ...
-#   hideui badges,arrows,hints,label
-#   showtools
-sudo sed -i '/^include themes\/refind-jwyn\/theme.conf/a showtools' "$REFIND_CONF"
-sudo sed -i '/^include themes\/refind-jwyn\/theme.conf/a hideui badges,arrows,hints,label' "$REFIND_CONF"
-info "UI do rEFInd configurada (barra de tools desabilitada, badges/labels ocultos)."
-
-# Desabilita auto-scan do Windows para controlar a ordem de exibição.
-# Sem isso, entradas auto-detectadas aparecem antes das entradas manuais.
-if ! grep -q "dont_scan_dirs" "$REFIND_CONF"; then
-    echo -e "\ndont_scan_dirs EFI/Microsoft" | sudo tee -a "$REFIND_CONF" > /dev/null
-    info "Auto-scan do Windows desabilitado no rEFInd."
-else
-    info "dont_scan_dirs já configurado, pulando."
-fi
-
-# Detecta caminho do bootloader do Windows (Microsoft Boot Manager)
-WIN_LOADER=""
-for candidate in /boot/EFI/Microsoft/Boot/bootmgfw.efi \
-                 /boot/efi/EFI/Microsoft/Boot/bootmgfw.efi \
-                 /efi/EFI/Microsoft/Boot/bootmgfw.efi; do
-    if [[ -f "$candidate" ]]; then
-        # Converte para caminho relativo à partição EFI (formato rEFInd)
-        WIN_LOADER="/EFI/Microsoft/Boot/bootmgfw.efi"
-        break
-    fi
-done
-
-# Adiciona entradas manuais: Windows primeiro, Arch Linux depois
-if [[ -n "$WIN_LOADER" ]]; then
-    WIN_STANZA=$(cat <<EOF
-
-menuentry "Windows" {
-    icon    themes/refind-jwyn/icons/os_win.png
-    loader  ${WIN_LOADER}
-}
-EOF
-)
-    if ! grep -q "menuentry \"Windows\"" "$REFIND_CONF"; then
-        echo "$WIN_STANZA" | sudo tee -a "$REFIND_CONF" > /dev/null
-        info "Entrada do Windows adicionada ao rEFInd."
-    else
-        info "Entrada do Windows já existe no rEFInd, pulando."
-    fi
-else
-    warn "Bootloader do Windows não encontrado — entrada do Windows não adicionada."
-fi
-
-STANZA=$(cat <<EOF
-
-menuentry "Arch Linux" {
-    icon     themes/refind-jwyn/icons/os_arch.png
-    loader   /vmlinuz-${KERNEL_VER}
-    initrd   /initramfs-${KERNEL_VER}.img
-    options  "root=UUID=${ROOT_UUID} rw quiet splash"
-    submenuentry "Boot com fallback initramfs" {
-        initrd /initramfs-${KERNEL_VER}-fallback.img
-    }
-    submenuentry "Boot para terminal (recovery)" {
-        add_options "systemd.unit=rescue.target"
-    }
-}
-EOF
-)
-
-if ! grep -q "menuentry \"Arch Linux\"" "$REFIND_CONF"; then
-    echo "$STANZA" | sudo tee -a "$REFIND_CONF" > /dev/null
-    info "Entrada do Arch Linux adicionada ao rEFInd."
-else
-    info "Entrada do Arch Linux já existe no rEFInd, pulando."
-fi
-
-# ── 11. zram ────────────────────────────────────────────────
+# ── 10. zram ────────────────────────────────────────────────
 if [[ ! -f /etc/systemd/zram-generator.conf ]]; then
     info "Configurando zram..."
     sudo bash -c 'cat > /etc/systemd/zram-generator.conf << EOF
