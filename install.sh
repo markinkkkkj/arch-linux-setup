@@ -40,7 +40,7 @@ info "Instalando pacotes base..."
 sudo pacman -S --needed --noconfirm \
     base-devel git sudo curl wget unzip \
     linux-firmware intel-ucode sof-firmware \
-    iwd networkmanager sway \
+    networkmanager sway \
     pipewire pipewire-alsa pipewire-pulse wireplumber rtkit alsa-utils \
     hyprland xdg-desktop-portal-hyprland xdg-desktop-portal-gtk \
     waybar \
@@ -50,7 +50,7 @@ sudo pacman -S --needed --noconfirm \
     ttf-jetbrains-mono-nerd noto-fonts-emoji \
     pavucontrol \
     imagemagick ffmpegthumbnailer perl-image-exiftool \
-    eog gedit neovim \
+    neovim \
     yazi \
     zram-generator \
     efibootmgr \
@@ -102,23 +102,11 @@ fc-cache -fv &>/dev/null
 # ── 7. Habilitar serviços do sistema ────────────────────────
 info "Habilitando serviços..."
 sudo systemctl enable NetworkManager
-sudo systemctl enable iwd
 
 # pipewire/wireplumber como serviços de usuário
 systemctl --user enable pipewire pipewire-pulse wireplumber
 
-# ── 8. Serviço de fix do audio (Intel SOF boot race) ────────
-# O driver SOF inicializa com perfil "Line" (saída de linha) em vez de
-# "Speaker", e às vezes perde o wireplumber na corrida de boot.
-# O serviço reinicia o wireplumber e força o perfil correto.
-info "Configurando serviço de fix de áudio..."
-mkdir -p ~/.config/systemd/user
-cp "$DOTFILES_DIR/systemd/wireplumber-restart.service" \
-    ~/.config/systemd/user/wireplumber-restart.service
-systemctl --user daemon-reload
-systemctl --user enable wireplumber-restart.service
-
-# ── 9. Numlock ligado no boot ────────────────────────────────
+# ── 8. Numlock ligado no boot ────────────────────────────────
 info "Configurando numlock ligado no boot..."
 # Desabilita serviço antigo caso exista
 sudo systemctl disable numlock-off.service 2>/dev/null || true
@@ -128,7 +116,7 @@ sudo cp "$DOTFILES_DIR/systemd/numlock-on.service" \
 sudo systemctl daemon-reload
 sudo systemctl enable numlock-on.service
 
-# ── 10. zram ────────────────────────────────────────────────
+# ── 9. zram ────────────────────────────────────────────────
 if [[ ! -f /etc/systemd/zram-generator.conf ]]; then
     info "Configurando zram..."
     sudo bash -c 'cat > /etc/systemd/zram-generator.conf << EOF
@@ -151,4 +139,3 @@ echo "      Super + R         → rofi (launcher)"
 echo "      Super + Q         → fechar janela"
 echo "      Super + M         → sair do Hyprland"
 echo ""
-warn "Se o áudio não funcionar no primeiro boot, reinicie uma vez – o serviço wireplumber-restart.service vai corrigir automaticamente."
