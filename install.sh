@@ -30,9 +30,9 @@ sudo pacman -S --needed --noconfirm bash-completion
 
 cp "$DOTFILES_DIR/bash/.bashrc" ~/.bashrc
 
-if [[ "$SHELL" != "$(which bash)" ]]; then
+if [[ "$SHELL" != "$(command -v bash)" ]]; then
     info "Definindo bash como shell padrão..."
-    chsh -s "$(which bash)"
+    chsh -s "$(command -v bash)"
 fi
 
 # ── 3. Instalar dependências base ────────────────────────────
