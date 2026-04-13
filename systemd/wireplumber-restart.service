@@ -8,10 +8,12 @@ RemainAfterExit=yes
 ExecStart=/bin/bash -c '\
     sleep 2 && \
     systemctl --user restart wireplumber && \
-    sleep 1 && \
-    pactl set-card-profile \
-        $(pactl list cards short | awk "/skl_hda_dsp_generic/{print \$2}") \
-        "HiFi (HDMI1, HDMI2, HDMI3, Mic1, Mic2, Speaker)"'
+    for i in $(seq 1 15); do \
+        card=$(pactl list cards short 2>/dev/null | awk "/skl_hda_dsp_generic/{print \$2}"); \
+        [ -n "$card" ] && pactl set-card-profile "$card" "HiFi (HDMI1, HDMI2, HDMI3, Mic1, Mic2, Speaker)" && exit 0; \
+        sleep 1; \
+    done; \
+    exit 1'
 
 [Install]
 WantedBy=default.target
