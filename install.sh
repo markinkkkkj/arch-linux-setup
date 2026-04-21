@@ -43,11 +43,16 @@ sudo pacman -S --needed --noconfirm \
     networkmanager sway which \
     pipewire pipewire-alsa pipewire-pulse wireplumber rtkit alsa-utils \
     hyprland xdg-desktop-portal-hyprland xdg-desktop-portal-gtk \
-    hyprpaper \
+    hyprpaper hyprlock hypridle \
     waybar \
     kitty \
     rofi \
     numlockx \
+    brightnessctl playerctl \
+    grim slurp wl-clipboard \
+    mako libnotify \
+    polkit-gnome \
+    bluez bluez-utils blueman \
     ttf-jetbrains-mono-nerd noto-fonts-emoji \
     pavucontrol \
     imagemagick ffmpegthumbnailer perl-image-exiftool \
@@ -75,7 +80,7 @@ yay -S --needed --noconfirm \
     visual-studio-code-bin
 
 # ── 5b. pyenv ────────────────────────────────────────────────
-if ! command -v pyenv &>/dev/null; then
+if [[ ! -d "$HOME/.pyenv" ]]; then
     info "Instalando pyenv..."
     curl -fsSL https://pyenv.run | bash
 else
@@ -96,7 +101,9 @@ info "Copiando configurações..."
 
 mkdir -p ~/.config/hypr
 cp "$DOTFILES_DIR/hypr/hyprland.conf"           ~/.config/hypr/hyprland.conf
-cp "$DOTFILES_DIR/hypr/archlinux-wallpaper.png" ~/.config/hypr/archlinux-wallpaper.png
+cp "$DOTFILES_DIR/hypr/wallpaper.png"           ~/.config/hypr/wallpaper.png
+cp "$DOTFILES_DIR/hypr/hyprlock.conf"           ~/.config/hypr/hyprlock.conf
+cp "$DOTFILES_DIR/hypr/hypridle.conf"           ~/.config/hypr/hypridle.conf
 
 # hyprpaper.conf: expande $HOME para o caminho real do usuário
 envsubst < "$DOTFILES_DIR/hypr/hyprpaper.conf" > ~/.config/hypr/hyprpaper.conf
@@ -112,6 +119,9 @@ mkdir -p ~/.config/yazi
 cp "$DOTFILES_DIR/yazi/yazi.toml"   ~/.config/yazi/yazi.toml
 cp "$DOTFILES_DIR/yazi/keymap.toml" ~/.config/yazi/keymap.toml
 
+mkdir -p ~/.config/mako
+cp "$DOTFILES_DIR/mako/config" ~/.config/mako/config
+
 # Brave: rodar em modo Wayland nativo (GPU acceleration + DRM/Widevine funcionam corretamente)
 grep -q -- '--ozone-platform=wayland' ~/.config/brave-flags.conf 2>/dev/null || \
     echo '--ozone-platform=wayland' >> ~/.config/brave-flags.conf
@@ -122,6 +132,17 @@ fc-cache -fv &>/dev/null
 # ── 7. Habilitar serviços do sistema ────────────────────────
 info "Habilitando serviços..."
 sudo systemctl enable NetworkManager
+sudo systemctl enable bluetooth
+
+# Desabilita randomização de MAC durante scans — evita quedas periódicas de conexão
+sudo mkdir -p /etc/NetworkManager/conf.d
+sudo bash -c 'cat > /etc/NetworkManager/conf.d/99-wifi-fix.conf << EOF
+[device]
+wifi.scan-rand-mac-address=no
+
+[connection]
+wifi.cloned-mac-address=preserve
+EOF'
 
 # pipewire/wireplumber como serviços de usuário
 systemctl --user enable pipewire pipewire-pulse wireplumber

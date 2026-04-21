@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Arch Linux + Hyprland dotfiles repository. The primary artifact is `install.sh`, a single-file setup script that provisions a complete Wayland desktop environment on a fresh Arch Linux installation.
 
+## Permissions
+
+Claude has permission to run `sudo` commands in this repository when needed for system-level operations (installing packages, managing services, writing to system paths, etc.).
+
 ## Running the Installer
 
 ```bash

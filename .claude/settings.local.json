@@ -54,7 +54,16 @@
       "Bash(pkill -f brave)",
       "Bash(pacman -Si hyprpaper)",
       "Bash(yay -Si hyprpaper)",
-      "Bash(yay -Si hyprpaper-git)"
+      "Bash(yay -Si hyprpaper-git)",
+      "Bash(journalctl --user -u waybar --since \"1 hour ago\" -n 20)",
+      "Bash(hyprctl getoption *)",
+      "Bash(journalctl --since \"today 10:50\" --until \"today 11:10\" -n 100)",
+      "Bash(journalctl --since \"2026-04-21 10:50\" --until \"2026-04-21 11:10\")",
+      "Bash(journalctl --since \"2026-04-21 00:00\" --until \"2026-04-21 10:58\")",
+      "Bash(journalctl --since \"2026-04-21 05:00\" --until \"2026-04-21 11:02\")",
+      "Bash(journalctl --since \"2026-04-21 07:19\" --until \"2026-04-21 11:02\")",
+      "Bash(journalctl --since \"2026-04-21 10:58\" --until \"2026-04-21 11:02:48\")",
+      "Bash(journalctl --since \"2026-04-21 10:59\" --until \"2026-04-21 11:02:48\")"
     ]
   }
 }
