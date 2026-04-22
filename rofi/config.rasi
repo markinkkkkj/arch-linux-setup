@@ -48,7 +48,7 @@ prompt {
 
 entry {
     text-color:        @fg;
-    placeholder:       "buscar aplicativo...";
+    placeholder:       "";
     placeholder-color: @fg-dim;
     cursor:            text;
 }
