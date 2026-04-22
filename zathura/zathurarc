@@ -1,0 +1,22 @@
+set recolor true
+set recolor-darkcolor "#cccccc"
+set recolor-lightcolor "#1a1a1a"
+set recolor-keephue false
+
+set font "JetBrainsMono Nerd Font 11"
+set default-bg "#1a1a1a"
+set default-fg "#cccccc"
+
+set inputbar-bg "#1a1a1a"
+set inputbar-fg "#eeeeee"
+set statusbar-bg "#1a1a1a"
+set statusbar-fg "#888888"
+
+set completion-bg "#1f1f1f"
+set completion-fg "#cccccc"
+set completion-highlight-bg "#2a2a2a"
+set completion-highlight-fg "#eeeeee"
+
+set selection-clipboard clipboard
+set smooth-scroll true
+set scroll-step 80

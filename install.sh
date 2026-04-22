@@ -60,6 +60,8 @@ sudo pacman -S --needed --noconfirm \
     imagemagick ffmpegthumbnailer perl-image-exiftool jq \
     neovim \
     yazi \
+    zathura zathura-pdf-mupdf \
+    p7zip trash-cli \
     zram-generator \
     efibootmgr
 
@@ -81,7 +83,8 @@ yay -S --needed --noconfirm \
     brave-bin \
     visual-studio-code-bin \
     hyprpicker \
-    gpu-screen-recorder
+    gpu-screen-recorder \
+    bibata-cursor-theme
 
 # ── 5b. pyenv ────────────────────────────────────────────────
 if [[ ! -d "$HOME/.pyenv" ]]; then
@@ -132,6 +135,30 @@ cp "$DOTFILES_DIR/mako/config" ~/.config/mako/config
 
 mkdir -p ~/.config/rofi
 cp "$DOTFILES_DIR/rofi/config.rasi" ~/.config/rofi/config.rasi
+
+mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0
+cp "$DOTFILES_DIR/gtk-3.0/settings.ini" ~/.config/gtk-3.0/settings.ini
+cp "$DOTFILES_DIR/gtk-4.0/settings.ini" ~/.config/gtk-4.0/settings.ini
+
+mkdir -p ~/.config/zathura
+cp "$DOTFILES_DIR/zathura/zathurarc" ~/.config/zathura/zathurarc
+
+cp "$DOTFILES_DIR/mimeapps.list" ~/.config/mimeapps.list
+
+mkdir -p ~/.icons/default
+cat > ~/.icons/default/index.theme << 'EOF'
+[Icon Theme]
+Name=Default
+Comment=Default Cursor Theme
+Inherits=Bibata-Modern-Classic
+EOF
+
+# Tema GTK dark + cursor via gsettings
+gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Classic'
+gsettings set org.gnome.desktop.interface cursor-size 24
+gsettings set org.gnome.desktop.interface icon-theme 'Adwaita'
 
 # Brave: rodar em modo Wayland nativo (GPU acceleration + DRM/Widevine funcionam corretamente)
 grep -q -- '--ozone-platform=wayland' ~/.config/brave-flags.conf 2>/dev/null || \

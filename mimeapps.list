@@ -1,0 +1,22 @@
+[Default Applications]
+# Imagens
+image/jpeg=imv.desktop
+image/png=imv.desktop
+image/gif=imv.desktop
+image/webp=imv.desktop
+image/bmp=imv.desktop
+image/tiff=imv.desktop
+image/svg+xml=imv.desktop
+image/avif=imv.desktop
+
+# Vídeos
+video/mp4=mpv.desktop
+video/x-matroska=mpv.desktop
+video/webm=mpv.desktop
+video/avi=mpv.desktop
+video/quicktime=mpv.desktop
+video/x-msvideo=mpv.desktop
+video/mpeg=mpv.desktop
+
+# PDF
+application/pdf=org.pwmt.zathura-pdf-mupdf.desktop

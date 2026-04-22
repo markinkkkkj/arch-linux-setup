@@ -63,7 +63,16 @@
       "Bash(journalctl --since \"2026-04-21 05:00\" --until \"2026-04-21 11:02\")",
       "Bash(journalctl --since \"2026-04-21 07:19\" --until \"2026-04-21 11:02\")",
       "Bash(journalctl --since \"2026-04-21 10:58\" --until \"2026-04-21 11:02:48\")",
-      "Bash(journalctl --since \"2026-04-21 10:59\" --until \"2026-04-21 11:02:48\")"
+      "Bash(journalctl --since \"2026-04-21 10:59\" --until \"2026-04-21 11:02:48\")",
+      "Bash(hyprctl activewindow *)",
+      "Bash(command -v python3)",
+      "Bash(command -v python)",
+      "Bash(command -v jq)",
+      "Bash(xargs -r kill -9)",
+      "Read(//home/markin/Videos/**)",
+      "Bash(awk '{print $2}')",
+      "Bash(git -C /home/markin/arch-linux-setup add hypr/scripts/record.sh)",
+      "Bash(git -C /home/markin/arch-linux-setup commit -m ' *)"
     ]
   }
 }
