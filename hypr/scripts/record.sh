@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
-# Toggle screen recording with gpu-screen-recorder.
-# F10  → inicia | Shift+F10 → para e salva.
+# Toggle screen recording. F10 inicia ou para a gravação.
 
-if pgrep -x gpu-screen-recorder > /dev/null; then
-    pkill -SIGINT gpu-screen-recorder
+PIDFILE=/tmp/gsr.pid
+
+if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+    kill -SIGINT "$(cat "$PIDFILE")"
+    rm -f "$PIDFILE"
     notify-send "Gravação salva" "~/Videos/" -t 3000
 else
+    rm -f "$PIDFILE"
     mkdir -p "$HOME/Videos"
     output="$HOME/Videos/$(date +%Y%m%d_%H%M%S).mp4"
     gpu-screen-recorder -w eDP-1 -f 30 -c mp4 -fallback-cpu-encoding yes -o "$output" &
-    notify-send "Gravando..." "Pressione Shift+F10 para parar" -t 3000
+    echo $! > "$PIDFILE"
+    notify-send "Gravando..." "F10 para parar" -t 3000
 fi
