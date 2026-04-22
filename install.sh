@@ -49,7 +49,10 @@ sudo pacman -S --needed --noconfirm \
     rofi \
     numlockx \
     brightnessctl playerctl \
-    grim slurp wl-clipboard \
+    grim slurp wl-clipboard cliphist \
+    imv mpv \
+    udiskie \
+    wf-recorder \
     mako libnotify \
     polkit-gnome \
     bluez bluez-utils blueman \
@@ -77,7 +80,8 @@ fi
 info "Instalando pacotes AUR..."
 yay -S --needed --noconfirm \
     brave-bin \
-    visual-studio-code-bin
+    visual-studio-code-bin \
+    hyprpicker
 
 # ── 5b. pyenv ────────────────────────────────────────────────
 if [[ ! -d "$HOME/.pyenv" ]]; then
@@ -129,6 +133,7 @@ grep -q -- '--ozone-platform=wayland' ~/.config/brave-flags.conf 2>/dev/null || 
     echo '--ozone-platform=wayland' >> ~/.config/brave-flags.conf
 
 mkdir -p ~/Pictures/Screenshots
+mkdir -p ~/Videos
 
 # atualizar cache de fontes após instalar noto-fonts-emoji
 fc-cache -fv &>/dev/null
