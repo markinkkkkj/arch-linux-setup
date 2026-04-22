@@ -114,7 +114,11 @@ cp "$DOTFILES_DIR/hypr/hypridle.conf"               ~/.config/hypr/hypridle.conf
 cp "$DOTFILES_DIR/hypr/scripts/move-window.sh"      ~/.config/hypr/scripts/move-window.sh
 cp "$DOTFILES_DIR/hypr/scripts/record.sh"           ~/.config/hypr/scripts/record.sh
 cp "$DOTFILES_DIR/hypr/scripts/close-window.sh"    ~/.config/hypr/scripts/close-window.sh
-chmod +x ~/.config/hypr/scripts/move-window.sh ~/.config/hypr/scripts/record.sh ~/.config/hypr/scripts/close-window.sh
+cp "$DOTFILES_DIR/hypr/scripts/keybind-help.sh"   ~/.config/hypr/scripts/keybind-help.sh
+chmod +x ~/.config/hypr/scripts/move-window.sh \
+         ~/.config/hypr/scripts/record.sh \
+         ~/.config/hypr/scripts/close-window.sh \
+         ~/.config/hypr/scripts/keybind-help.sh
 
 # hyprpaper.conf: expande $HOME para o caminho real do usuário
 envsubst < "$DOTFILES_DIR/hypr/hyprpaper.conf" > ~/.config/hypr/hyprpaper.conf
