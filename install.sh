@@ -99,11 +99,13 @@ fi
 # ── 6. Copiar configs ────────────────────────────────────────
 info "Copiando configurações..."
 
-mkdir -p ~/.config/hypr
-cp "$DOTFILES_DIR/hypr/hyprland.conf"           ~/.config/hypr/hyprland.conf
-cp "$DOTFILES_DIR/hypr/wallpaper.png"           ~/.config/hypr/wallpaper.png
-cp "$DOTFILES_DIR/hypr/hyprlock.conf"           ~/.config/hypr/hyprlock.conf
-cp "$DOTFILES_DIR/hypr/hypridle.conf"           ~/.config/hypr/hypridle.conf
+mkdir -p ~/.config/hypr/scripts
+cp "$DOTFILES_DIR/hypr/hyprland.conf"               ~/.config/hypr/hyprland.conf
+cp "$DOTFILES_DIR/hypr/wallpaper.png"               ~/.config/hypr/wallpaper.png
+cp "$DOTFILES_DIR/hypr/hyprlock.conf"               ~/.config/hypr/hyprlock.conf
+cp "$DOTFILES_DIR/hypr/hypridle.conf"               ~/.config/hypr/hypridle.conf
+cp "$DOTFILES_DIR/hypr/scripts/move-window.sh"      ~/.config/hypr/scripts/move-window.sh
+chmod +x ~/.config/hypr/scripts/move-window.sh
 
 # hyprpaper.conf: expande $HOME para o caminho real do usuário
 envsubst < "$DOTFILES_DIR/hypr/hyprpaper.conf" > ~/.config/hypr/hyprpaper.conf
@@ -125,6 +127,8 @@ cp "$DOTFILES_DIR/mako/config" ~/.config/mako/config
 # Brave: rodar em modo Wayland nativo (GPU acceleration + DRM/Widevine funcionam corretamente)
 grep -q -- '--ozone-platform=wayland' ~/.config/brave-flags.conf 2>/dev/null || \
     echo '--ozone-platform=wayland' >> ~/.config/brave-flags.conf
+
+mkdir -p ~/Pictures/Screenshots
 
 # atualizar cache de fontes após instalar noto-fonts-emoji
 fc-cache -fv &>/dev/null

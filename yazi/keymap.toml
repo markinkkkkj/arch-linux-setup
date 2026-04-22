@@ -181,5 +181,5 @@ desc = "Nova aba no diretório atual"
 
 [[mgr.prepend_keymap]]
 on  = ["q"]
-run = "quit"
+run = "quit --no-confirm"
 desc = "Sair do yazi"
