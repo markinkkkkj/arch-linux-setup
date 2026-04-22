@@ -57,7 +57,7 @@ sudo pacman -S --needed --noconfirm \
     bluez bluez-utils blueman \
     ttf-jetbrains-mono-nerd noto-fonts-emoji \
     pavucontrol \
-    imagemagick ffmpegthumbnailer perl-image-exiftool \
+    imagemagick ffmpegthumbnailer perl-image-exiftool jq \
     neovim \
     yazi \
     zram-generator \
@@ -110,7 +110,8 @@ cp "$DOTFILES_DIR/hypr/hyprlock.conf"               ~/.config/hypr/hyprlock.conf
 cp "$DOTFILES_DIR/hypr/hypridle.conf"               ~/.config/hypr/hypridle.conf
 cp "$DOTFILES_DIR/hypr/scripts/move-window.sh"      ~/.config/hypr/scripts/move-window.sh
 cp "$DOTFILES_DIR/hypr/scripts/record.sh"           ~/.config/hypr/scripts/record.sh
-chmod +x ~/.config/hypr/scripts/move-window.sh ~/.config/hypr/scripts/record.sh
+cp "$DOTFILES_DIR/hypr/scripts/close-window.sh"    ~/.config/hypr/scripts/close-window.sh
+chmod +x ~/.config/hypr/scripts/move-window.sh ~/.config/hypr/scripts/record.sh ~/.config/hypr/scripts/close-window.sh
 
 # hyprpaper.conf: expande $HOME para o caminho real do usuário
 envsubst < "$DOTFILES_DIR/hypr/hyprpaper.conf" > ~/.config/hypr/hyprpaper.conf
