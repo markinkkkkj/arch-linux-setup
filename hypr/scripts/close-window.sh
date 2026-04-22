@@ -6,7 +6,7 @@
 class=$(hyprctl activewindow -j | jq -r '.class')
 
 if [[ "$class" == "yazi" ]]; then
-    hyprctl dispatch sendshortcut "" q "class:^(yazi)$"
+    wtype -k q
 else
     hyprctl dispatch killactive
 fi

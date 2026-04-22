@@ -49,7 +49,7 @@ sudo pacman -S --needed --noconfirm \
     rofi \
     numlockx \
     brightnessctl playerctl \
-    grim slurp wl-clipboard cliphist \
+    grim slurp wl-clipboard cliphist wtype \
     imv mpv \
     udiskie \
     mako libnotify \
