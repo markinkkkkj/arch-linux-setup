@@ -11,7 +11,7 @@ if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
 fi
 
 choice=$(printf "Mudo\nMicrofone\nÁudio do PC\nMicrofone + PC" \
-    | rofi -dmenu -p " Gravar:" -l 4 -theme-str 'window { width: 300px; }')
+    | rofi -dmenu -l 4 -theme-str 'window { width: 300px; } inputbar { children: [entry]; }')
 
 [[ -z "$choice" ]] && exit 0
 
