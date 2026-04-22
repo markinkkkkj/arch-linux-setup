@@ -1,0 +1,92 @@
+configuration {
+    modi:                   "drun";
+    show-icons:             true;
+    drun-display-format:    "{name}";
+    display-drun:           "";
+    font:                   "JetBrainsMono Nerd Font 12";
+}
+
+* {
+    bg:       #1a1a1a;
+    bg-alt:   #242424;
+    border-c: #2a2a2a;
+    fg:       #cccccc;
+    fg-dim:   #444444;
+    fg-sel:   #eeeeee;
+
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+window {
+    background-color: @bg;
+    border:           1px solid;
+    border-color:     @border-c;
+    width:            580px;
+    location:         center;
+    anchor:           center;
+}
+
+mainbox {
+    spacing:    0;
+    padding:    0;
+    children:   [ inputbar, listview ];
+}
+
+inputbar {
+    padding:          10px 14px;
+    spacing:          8px;
+    background-color: @bg;
+    border-bottom:    1px solid;
+    border-color:     @border-c;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    text-color: @fg-dim;
+}
+
+entry {
+    text-color:        @fg;
+    placeholder:       "buscar aplicativo...";
+    placeholder-color: @fg-dim;
+    cursor:            text;
+}
+
+listview {
+    padding:      6px 0;
+    lines:        8;
+    fixed-height: false;
+    border:       0;
+    scrollbar:    false;
+}
+
+element {
+    padding:     7px 14px;
+    spacing:     10px;
+    orientation: horizontal;
+}
+
+element.normal.normal {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+element.selected.normal {
+    background-color: @bg-alt;
+    text-color:       @fg-sel;
+}
+
+element.alternate.normal {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+element-icon {
+    size:           1.2em;
+    vertical-align: 0.5;
+}
+
+element-text {
+    vertical-align: 0.5;
+}

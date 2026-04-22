@@ -52,7 +52,6 @@ sudo pacman -S --needed --noconfirm \
     grim slurp wl-clipboard cliphist \
     imv mpv \
     udiskie \
-    wf-recorder \
     mako libnotify \
     polkit-gnome \
     bluez bluez-utils blueman \
@@ -81,7 +80,8 @@ info "Instalando pacotes AUR..."
 yay -S --needed --noconfirm \
     brave-bin \
     visual-studio-code-bin \
-    hyprpicker
+    hyprpicker \
+    gpu-screen-recorder
 
 # ── 5b. pyenv ────────────────────────────────────────────────
 if [[ ! -d "$HOME/.pyenv" ]]; then
@@ -109,7 +109,8 @@ cp "$DOTFILES_DIR/hypr/wallpaper.png"               ~/.config/hypr/wallpaper.png
 cp "$DOTFILES_DIR/hypr/hyprlock.conf"               ~/.config/hypr/hyprlock.conf
 cp "$DOTFILES_DIR/hypr/hypridle.conf"               ~/.config/hypr/hypridle.conf
 cp "$DOTFILES_DIR/hypr/scripts/move-window.sh"      ~/.config/hypr/scripts/move-window.sh
-chmod +x ~/.config/hypr/scripts/move-window.sh
+cp "$DOTFILES_DIR/hypr/scripts/record.sh"           ~/.config/hypr/scripts/record.sh
+chmod +x ~/.config/hypr/scripts/move-window.sh ~/.config/hypr/scripts/record.sh
 
 # hyprpaper.conf: expande $HOME para o caminho real do usuário
 envsubst < "$DOTFILES_DIR/hypr/hyprpaper.conf" > ~/.config/hypr/hyprpaper.conf
@@ -127,6 +128,9 @@ cp "$DOTFILES_DIR/yazi/keymap.toml" ~/.config/yazi/keymap.toml
 
 mkdir -p ~/.config/mako
 cp "$DOTFILES_DIR/mako/config" ~/.config/mako/config
+
+mkdir -p ~/.config/rofi
+cp "$DOTFILES_DIR/rofi/config.rasi" ~/.config/rofi/config.rasi
 
 # Brave: rodar em modo Wayland nativo (GPU acceleration + DRM/Widevine funcionam corretamente)
 grep -q -- '--ozone-platform=wayland' ~/.config/brave-flags.conf 2>/dev/null || \
