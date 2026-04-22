@@ -1,83 +1,120 @@
 * {
     background: transparent;
-    color: #cccccc;
-    font-family: JetBrainsMono Nerd Font, Noto Color Emoji;
+    color: #c0c0c0;
+    font-family: "JetBrainsMono Nerd Font", "Noto Color Emoji";
     font-size: 13px;
     border: none;
     border-radius: 0;
     min-height: 0;
-    transition: all 0.2s ease;
+    transition: color 0.15s ease;
 }
 
 window#waybar {
     background: #1a1a1a;
-    border-bottom: 1px solid #2a2a2a;
+    border: 1px solid #272727;
+    border-radius: 12px;
+    color: #c0c0c0;
 }
 
 /* ── Workspaces ── */
 #workspaces {
-    padding: 0 4px;
+    padding: 0 6px;
 }
 
 #workspaces button {
-    padding: 0 8px;
-    color: #444444;
+    padding: 0 10px;
+    margin: 6px 2px;
+    color: #383838;
     background: transparent;
-    border-bottom: 2px solid transparent;
-    border-radius: 0;
+    border-radius: 6px;
+    min-width: 0;
+    transition: all 0.15s ease;
 }
 
 #workspaces button.active {
-    color: #eeeeee;
-    border-bottom: 2px solid #888888;
+    color: #e0e0e0;
+    background: #272727;
 }
 
 #workspaces button:hover {
-    background: #242424;
-    color: #aaaaaa;
+    color: #888888;
+    background: #222222;
 }
 
-/* ── Módulos gerais ── */
-#clock,
+/* ── Clock ── */
+#clock {
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    color: #e8e8e8;
+    padding: 0 20px;
+}
+
+/* ── Módulos direita ── */
 #cpu,
 #memory,
 #backlight,
 #pulseaudio,
 #network,
-#battery,
+#battery {
+    padding: 0 12px;
+    color: #787878;
+}
+
+#cpu:hover,
+#memory:hover,
+#backlight:hover,
+#pulseaudio:hover,
+#network:hover,
+#battery:hover {
+    color: #c0c0c0;
+}
+
+/* separador visual entre grupos via borda esquerda */
+#memory {
+    border-left: 1px solid #252525;
+}
+
+#backlight {
+    border-left: 1px solid #252525;
+}
+
+#network {
+    border-left: 1px solid #252525;
+}
+
+#battery {
+    border-left: 1px solid #252525;
+}
+
 #tray {
-    padding: 0 14px;
-    color: #cccccc;
-}
-
-/* ── Clock ── */
-#clock {
-    color: #eeeeee;
-    font-weight: bold;
-    letter-spacing: 1px;
-}
-
-/* ── Separador ── */
-#custom-sep {
-    color: #2e2e2e;
-    padding: 0;
-    font-size: 16px;
+    padding: 0 10px;
+    border-left: 1px solid #252525;
 }
 
 /* ── Bateria ── */
 #battery.warning {
-    color: #999999;
+    color: #b89050;
 }
 
 #battery.critical {
-    color: #777777;
+    color: #a05050;
     animation: blink 1s step-end infinite;
 }
 
 #battery.charging {
-    color: #dddddd;
+    color: #70a870;
 }
 
 @keyframes blink {
-    50% { color: #444444; }
+    50% { color: #383838; }
+}
+
+/* ── Tray ── */
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
 }
