@@ -72,7 +72,13 @@
       "Read(//home/markin/Videos/**)",
       "Bash(awk '{print $2}')",
       "Bash(git -C /home/markin/arch-linux-setup add hypr/scripts/record.sh)",
-      "Bash(git -C /home/markin/arch-linux-setup commit -m ' *)"
+      "Bash(git -C /home/markin/arch-linux-setup commit -m ' *)",
+      "Bash(hyprctl reload *)",
+      "Bash(git -C /home/markin/arch-linux-setup add hypr/hyprland.conf hypr/scripts/keybind-help.sh install.sh)",
+      "Bash(cliphist list *)",
+      "Bash(wl-paste --type text --watch cliphist store)",
+      "Bash(wl-paste --type image --watch cliphist store)",
+      "Bash(wl-copy)"
     ]
   }
 }
