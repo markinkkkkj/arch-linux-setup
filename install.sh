@@ -39,7 +39,7 @@ fi
 info "Instalando pacotes base..."
 sudo pacman -S --needed --noconfirm \
     base-devel git sudo curl wget unzip \
-    linux-firmware intel-ucode sof-firmware \
+    less linux-firmware intel-ucode sof-firmware \
     networkmanager sway which \
     pipewire pipewire-alsa pipewire-pulse wireplumber rtkit alsa-utils \
     hyprland xdg-desktop-portal-hyprland xdg-desktop-portal-gtk \
