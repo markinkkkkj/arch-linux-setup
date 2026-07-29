@@ -59,6 +59,16 @@ check_disk_space() {
     fi
 }
 
+check_yay() {
+    if ! command -v yay >/dev/null 2>&1; then
+	git clone https://aur.archlinux.org/yay.git
+	cd yay
+	makepkg -si
+	cd ../
+	rm -rf yay
+    fi
+}
+
 check_arch
 check_not_root
 check_internet
@@ -66,11 +76,37 @@ check_pacman
 check_sudo
 check_disk_space
 
+pkgs=(
+    base-devel 
+    sway swaybg swayidle swaylock
+    waybar wofi foot
+    pipewire pipewire-pulse wireplumber
+    xdg-desktop-portal-wlr
+    wl-clipboard cliphist
+    grim slurp
+    nwg-look papirus-icon-theme
+    polkit-gnome
+)
+
+pkgs_yay=(
+    zen-browser-bin
+    visual-studio-code-bin
+)
+
 cat <<'EOF'
 Welcome to my personal Arch Linux configuration!
 
 This script will install several packages and programs that are
 used by me in my routine as a software engineering student and
 developer. Some may not be useful to you, so feel free to fork
-the repository and make your own customization :)
+the repository and make your own customiza
+
+This are the programs and packeges that will be installed:
 EOF
+echo ${pkgs[@]}
+
+sudo pacman -S --needed --noconfirm "${pkgs[@]}"
+
+check_yay
+
+yay -S --noconfirm "${pkgs_yay[@]}"
