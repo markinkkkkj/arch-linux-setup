@@ -1,0 +1,511 @@
+========================================
+  1. SISTEMA
+========================================
+
+--- Distro
+NAME="Arch Linux"
+PRETTY_NAME="Arch Linux"
+ID=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;23;147;209"
+HOME_URL="https://archlinux.org/"
+DOCUMENTATION_URL="https://wiki.archlinux.org/"
+SUPPORT_URL="https://bbs.archlinux.org/"
+BUG_REPORT_URL="https://gitlab.archlinux.org/groups/archlinux/-/issues"
+PRIVACY_POLICY_URL="https://terms.archlinux.org/docs/privacy-policy/"
+LOGO=archlinux-logo
+
+--- Kernel
+Linux archlinux 7.1.5-arch1-2 #1 SMP PREEMPT_DYNAMIC Tue, 28 Jul 2026 13:49:51 +0000 x86_64 GNU/Linux
+
+--- Boot mode
+UEFI
+
+--- Modelo da máquina
+20S1002LBR
+ThinkPad T14 Gen 1
+
+--- Versão da BIOS/firmware
+N2XET45W (1.35 )
+
+========================================
+  2. CPU E MICROCODE
+========================================
+
+--- CPU
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           39 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  8
+On-line CPU(s) list:                     0-7
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Core(TM) i7-10610U CPU @ 1.80GHz
+CPU family:                              6
+Model:                                   142
+Thread(s) per core:                      2
+Core(s) per socket:                      4
+Socket(s):                               1
+Stepping:                                12
+Microcode version:                       0x100
+CPU(s) scaling MHz:                      59%
+CPU max MHz:                             4900.0000
+CPU min MHz:                             400.0000
+BogoMIPS:                                4599.93
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust sgx bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp vnmi md_clear flush_l1d arch_capabilities
+Virtualization:                          VT-x
+L1d cache:                               128 KiB (4 instances)
+L1i cache:                               128 KiB (4 instances)
+L2 cache:                                1 MiB (4 instances)
+L3 cache:                                8 MiB (1 instance)
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-7
+Vulnerability Gather data sampling:      Mitigation; Microcode
+Vulnerability Ghostwrite:                Not affected
+Vulnerability Indirect target selection: Mitigation; Aligned branch/return thunks
+Vulnerability Itlb multihit:             KVM: Mitigation: Split huge pages
+Vulnerability L1tf:                      Not affected
+Vulnerability Mds:                       Not affected
+Vulnerability Meltdown:                  Not affected
+Vulnerability Mmio stale data:           Mitigation; Clear CPU buffers; SMT vulnerable
+Vulnerability Old microcode:             Not affected
+Vulnerability Reg file data sampling:    Not affected
+Vulnerability Retbleed:                  Mitigation; Enhanced IBRS
+Vulnerability Spec rstack overflow:      Not affected
+Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; PBRSB-eIBRS SW sequence; BHI SW loop, KVM SW loop
+Vulnerability Srbds:                     Mitigation; Microcode
+Vulnerability Tsa:                       Not affected
+Vulnerability Tsx async abort:           Mitigation; TSX disabled
+Vulnerability Vmscape:                   Mitigation; IBPB before exit to userspace
+
+--- Microcode carregado?
+microcode    : 0x100
+(dmesg sem permissão — rode com sudo para esta parte)
+
+========================================
+  3. GPU E DRIVERS DE VÍDEO
+========================================
+
+--- Placas de vídeo + driver em uso
+00:02.0 VGA compatible controller [0300]: Intel Corporation CometLake-U GT2 [UHD Graphics] [8086:9b41] (rev 02)
+    Subsystem: Lenovo Device [17aa:22b1]
+    Kernel driver in use: i915
+    Kernel modules: i915
+
+--- Módulos de vídeo carregados
+i915                 5087232  18
+drm_buddy              12288  1 i915
+i2c_algo_bit           24576  1 i915
+ttm                   151552  1 i915
+intel_gtt              32768  1 i915
+drm_display_helper    303104  1 i915
+video                  81920  2 thinkpad_acpi,i915
+cec                   102400  2 drm_display_helper,i915
+
+--- Aceleração de vídeo (VA-API)
+(ferramenta "vainfo" não instalada)
+
+--- Vulkan
+
+========================================
+  4. ÁUDIO  <<< SEÇÃO MAIS IMPORTANTE
+========================================
+
+--- Controladora de áudio (PCI)
+00:1f.3 Audio device [0403]: Intel Corporation 400 Series Chipset Family On-Package HD Audio [8086:02c8]
+    Subsystem: Lenovo Device [17aa:22b1]
+    Kernel driver in use: sof-audio-pci-intel-cnl
+    Kernel modules: snd_soc_avs, snd_sof_pci_intel_cnl, snd_hda_intel
+00:1f.4 SMBus [0c05]: Intel Corporation 400 Series Chipset Family On-Package SMBus [8086:02a3]
+    Subsystem: Lenovo Device [17aa:22b1]
+
+--- Placas registradas pelo ALSA (/proc/asound/cards)
+ 0 [sofhdadsp      ]: sof-hda-dsp - sof-hda-dsp
+                      LENOVO-20S1002LBR-ThinkPadT14Gen1
+
+--- Dispositivos de reprodução
+**** List of PLAYBACK Hardware Devices ****
+card 0: sofhdadsp [sof-hda-dsp], device 0: HDA Analog (*) []
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+card 0: sofhdadsp [sof-hda-dsp], device 3: HDMI1 (*) [HDMI 1]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+card 0: sofhdadsp [sof-hda-dsp], device 4: HDMI2 (*) [HDMI 2]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+card 0: sofhdadsp [sof-hda-dsp], device 5: HDMI3 (*) [HDMI 3]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+card 0: sofhdadsp [sof-hda-dsp], device 31: HDA Analog Deep Buffer (*) []
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+
+--- Dispositivos de captura
+**** List of CAPTURE Hardware Devices ****
+card 0: sofhdadsp [sof-hda-dsp], device 0: HDA Analog (*) []
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+card 0: sofhdadsp [sof-hda-dsp], device 6: DMIC (*) []
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+card 0: sofhdadsp [sof-hda-dsp], device 7: DMIC16kHz (*) []
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+
+--- Módulos de áudio carregados
+snd_soc_skl_hda_dsp    16384  4
+snd_soc_intel_sof_board_helpers    32768  1 snd_soc_skl_hda_dsp
+snd_sof_probes         40960  0
+snd_soc_intel_hda_dsp_common    16384  1 snd_soc_intel_sof_board_helpers
+snd_hda_codec_intelhdmi    28672  1
+snd_hda_codec_hdmi     61440  1 snd_hda_codec_intelhdmi
+snd_hda_codec_alc269   155648  1
+snd_hda_codec_realtek_lib    65536  1 snd_hda_codec_alc269
+snd_hda_scodec_component    20480  1 snd_hda_codec_alc269
+snd_hda_codec_generic   114688  2 snd_hda_codec_realtek_lib,snd_hda_codec_alc269
+snd_soc_dmic           12288  1
+snd_hda_intel          73728  0
+snd_sof_pci_intel_cnl    24576  0
+snd_sof_intel_hda_generic    45056  1 snd_sof_pci_intel_cnl
+soundwire_intel        94208  1 snd_sof_intel_hda_generic
+snd_sof_intel_hda_sdw_bpt    24576  1 soundwire_intel
+snd_sof_intel_hda_common   217088  3 snd_sof_intel_hda_sdw_bpt,snd_sof_intel_hda_generic,snd_sof_pci_intel_cnl
+snd_soc_hdac_hda       24576  1 snd_sof_intel_hda_common
+snd_sof_intel_hda_mlink    45056  4 snd_sof_intel_hda_sdw_bpt,soundwire_intel,snd_sof_intel_hda_common,snd_sof_intel_hda_generic
+snd_sof_intel_hda      24576  2 snd_sof_intel_hda_common,snd_sof_intel_hda_generic
+soundwire_cadence      61440  1 soundwire_intel
+snd_sof_pci            24576  2 snd_sof_intel_hda_generic,snd_sof_pci_intel_cnl
+snd_sof_xtensa_dsp     16384  1 snd_sof_intel_hda_generic
+snd_sof               512000  7 snd_sof_intel_hda_sdw_bpt,snd_sof_pci,snd_sof_intel_hda_common,snd_sof_intel_hda_generic,snd_sof_probes,snd_sof_intel_hda,snd_sof_pci_intel_cnl
+snd_sof_utils          16384  1 snd_sof
+snd_soc_acpi_intel_match   147456  3 snd_soc_intel_sof_board_helpers,snd_sof_intel_hda_generic,snd_sof_pci_intel_cnl
+snd_soc_acpi_intel_sdca_quirks    12288  1 snd_soc_acpi_intel_match
+soundwire_generic_allocation    20480  1 soundwire_intel
+snd_soc_sdw_utils     143360  1 snd_sof_intel_hda_generic
+snd_soc_acpi           16384  2 snd_soc_acpi_intel_match,snd_sof_intel_hda_generic
+soundwire_bus        1216512  4 soundwire_intel,snd_soc_sdw_utils,soundwire_generic_allocation,soundwire_cadence
+snd_soc_sdca          151552  2 snd_soc_acpi_intel_sdca_quirks,soundwire_bus
+crc8                   12288  1 soundwire_cadence
+snd_soc_avs           266240  0
+snd_soc_hda_codec      28672  1 snd_soc_avs
+snd_hda_ext_core       36864  7 snd_sof_intel_hda_sdw_bpt,snd_soc_avs,snd_soc_hda_codec,snd_sof_intel_hda_common,snd_soc_hdac_hda,snd_sof_intel_hda_mlink,snd_sof_intel_hda
+snd_hda_codec         229376  12 snd_hda_codec_generic,snd_soc_avs,snd_hda_codec_hdmi,snd_soc_hda_codec,snd_hda_intel,snd_soc_intel_hda_dsp_common,snd_hda_codec_realtek_lib,snd_soc_hdac_hda,snd_hda_codec_alc269,snd_sof_intel_hda,snd_soc_skl_hda_dsp,snd_hda_codec_intelhdmi
+snd_hda_core          151552  14 snd_hda_codec_generic,snd_soc_avs,snd_hda_codec_hdmi,snd_soc_hda_codec,snd_hda_intel,snd_hda_ext_core,snd_hda_codec,snd_soc_intel_hda_dsp_common,snd_sof_intel_hda_common,snd_hda_codec_realtek_lib,snd_soc_hdac_hda,snd_hda_codec_alc269,snd_sof_intel_hda,snd_hda_codec_intelhdmi
+snd_intel_dspcfg       49152  5 snd_soc_avs,snd_hda_intel,snd_sof,snd_sof_intel_hda_common,snd_sof_intel_hda_generic
+snd_intel_sdw_acpi     16384  2 snd_intel_dspcfg,snd_sof_intel_hda_generic
+snd_hwdep              24576  1 snd_hda_codec
+snd_soc_core          446464  12 snd_soc_avs,snd_soc_hda_codec,soundwire_intel,snd_sof,snd_soc_intel_sof_board_helpers,snd_soc_sdca,snd_sof_intel_hda_common,snd_soc_sdw_utils,snd_soc_hdac_hda,snd_sof_probes,snd_soc_dmic,snd_soc_skl_hda_dsp
+snd_compress           36864  3 snd_soc_avs,snd_soc_core,snd_sof_probes
+ac97_bus               12288  1 snd_soc_core
+snd_pcm_dmaengine      20480  1 snd_soc_core
+snd_pcm               221184  14 snd_soc_avs,snd_hda_codec_hdmi,snd_hda_intel,snd_hda_codec,soundwire_intel,snd_sof,snd_soc_sdca,snd_sof_intel_hda_common,snd_compress,snd_sof_intel_hda_generic,snd_soc_core,snd_sof_utils,snd_hda_core,snd_pcm_dmaengine
+snd                   159744  28 snd_ctl_led,snd_hda_codec_generic,snd_seq,snd_seq_device,snd_hda_codec_hdmi,snd_hwdep,snd_hda_intel,snd_hda_codec,snd_sof,snd_soc_sdca,snd_timer,snd_hda_codec_realtek_lib,snd_compress,snd_soc_sdw_utils,thinkpad_acpi,snd_hda_codec_alc269,snd_soc_core,snd_pcm
+
+--- Mensagens do kernel sobre SOF / firmware de áudio
+(dmesg restrito — rode: sudo dmesg | grep -Ei 'sof|snd|firmware')
+
+--- Firmware SOF presente no disco?
+community
+intel-signed
+sof-adl.ldc
+sof-adl-n.ldc
+sof-adl-n.ri
+sof-adl.ri
+sof-adl-s.ldc
+sof-adl-s.ri
+sof-apl.ldc
+sof-apl.ri
+sof-bdw.ldc
+sof-bdw.ri
+sof-byt.ldc
+sof-byt.ri
+sof-cfl.ldc
+sof-cfl.ri
+sof-cht.ldc
+sof-cht.ri
+sof-cml.ldc
+sof-cml.ri
+
+--- Perfis UCM presentes?
+Allwinner
+AMD
+Amlogic
+blobs
+codecs
+common
+conf.d
+conf.virt.d
+DEBUG.md
+HDA
+
+--- Servidor de som ativo
+Server String: /run/user/1000/pulse/native
+Library Protocol Version: 35
+Server Protocol Version: 35
+Is Local: yes
+Client Index: 109
+Tile Size: 65472
+User Name: markinkkkkj
+Host Name: archlinux
+Server Name: PulseAudio (on PipeWire 1.6.8)
+Server Version: 15.0.0
+Default Sample Specification: float32le 2ch 48000Hz
+Default Channel Map: front-left,front-right
+Default Sink: alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__Speaker__sink
+Default Source: alsa_input.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__Mic1__source
+Cookie: 23a2:3a70
+
+--- Sinks disponíveis
+53    alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__HDMI3__sink    PipeWire    s24-32le 2ch 48000Hz    SUSPENDED
+54    alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__HDMI2__sink    PipeWire    s24-32le 2ch 48000Hz    SUSPENDED
+55    alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__HDMI1__sink    PipeWire    s24-32le 2ch 48000Hz    SUSPENDED
+56    alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__Speaker__sink    PipeWire    s32le 2ch 48000Hz    SUSPENDED
+
+--- Serviços de áudio do usuário
+active
+active
+active
+
+========================================
+  5. REDE E BLUETOOTH
+========================================
+
+--- Interfaces de rede + driver
+00:14.3 Network controller [0280]: Intel Corporation 400 Series Chipset Family On-Package CNVi WiFi [8086:02f0]
+    Subsystem: Intel Corporation Dual Band Wi-Fi 6(802.11ax) AX201 160MHz 2x2 [Harrison Peak] [8086:0070]
+    Kernel driver in use: iwlwifi
+    Kernel modules: iwlwifi
+--
+00:1f.6 Ethernet controller [0200]: Intel Corporation 400 Series Chipset Family On-Package GbE Controller (Corporate/vPro) [8086:0d4e]
+    Subsystem: Lenovo Device [17aa:22b1]
+    Kernel driver in use: e1000e
+    Kernel modules: e1000e
+
+--- Interfaces (IPs mascarados parcialmente)
+lo               UNKNOWN        XX:XX:XX:XX:XX:XX <LOOPBACK,UP,LOWER_UP>
+enp0s31f6        DOWN           XX:XX:XX:XX:XX:XX <NO-CARRIER,BROADCAST,MULTICAST,UP>
+wlp0s20f3        UP             XX:XX:XX:XX:XX:XX <BROADCAST,MULTICAST,UP,LOWER_UP>
+
+--- Rádios (rfkill)
+0: tpacpi_bluetooth_sw: Bluetooth
+    Soft blocked: no
+    Hard blocked: no
+1: hci0: Bluetooth
+    Soft blocked: no
+    Hard blocked: no
+2: phy0: Wireless LAN
+    Soft blocked: no
+    Hard blocked: no
+
+--- NetworkManager ativo?
+active
+
+--- Bluetooth
+(nada em USB)
+inactive
+serviço bluetooth inativo/não instalado
+
+========================================
+  6. TECLADO, TOUCHPAD, TRACKPOINT
+========================================
+
+--- Dispositivos de entrada
+
+--- Dispositivos USB (webcam, leitor biométrico, etc.)
+(usbutils não instalado)
+
+========================================
+  7. ARMAZENAMENTO E SISTEMAS DE ARQUIVOS
+========================================
+
+--- Discos e partições
+NAME          SIZE FSTYPE MOUNTPOINT LABEL
+zram0           4G swap   [SWAP]     zram0
+nvme0n1     476.9G
+├─nvme0n1p1     1G vfat   /boot
+├─nvme0n1p2    16M
+├─nvme0n1p3 149.2G ntfs
+├─nvme0n1p4   780M ntfs
+├─nvme0n1p5   165G ext4   /
+└─nvme0n1p6 160.9G apfs
+
+--- Uso de espaço
+Filesystem      Size  Used Avail Use% Mounted on
+efivarfs        246K  123K  119K  51% /sys/firmware/efi/efivars
+/dev/nvme0n1p5  162G  8.2G  145G   6% /
+/dev/nvme0n1p1 1022M  157M  866M  16% /boot
+
+--- fstab (UUIDs preservados, sem dados sensíveis)
+# Static information about the filesystems.
+# See fstab(5) for details.
+
+# <file system> <dir> <type> <options> <dump> <pass>
+# /dev/nvme0n1p5
+UUID=9b3816dd-cc67-4324-bb56-f5ee2764edb7    /             ext4          rw,relatime    0 1
+
+# /dev/nvme0n1p1
+UUID=FCAD-4318          /boot         vfat          rw,relatime,fmask=0077,dmask=0077,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro    0 2
+
+
+--- Swap / zram
+NAME       TYPE      SIZE USED PRIO
+/dev/zram0 partition   4G   0B  100
+
+========================================
+  8. ENERGIA E TÉRMICO
+========================================
+
+--- Bateria
+    state:               fully-charged
+    energy-full:         42.17 Wh
+    energy-full-design:  51 Wh
+    capacity-level:      Normal
+    percentage:          100%
+    capacity:            82.6863%
+
+--- Gerenciadores de energia (ATENÇÃO A CONFLITO)
+tlp:                      inactive
+não instalado
+power-profiles-daemon:    inactive
+não instalado
+thermald:                 inactive
+não instalado
+
+--- Controle de brilho
+intel_backlight
+
+========================================
+  9. FIRMWARE FALTANDO (crítico)
+========================================
+(nada encontrado, OU dmesg restrito — rode com sudo para confirmar)
+
+========================================
+  10. SESSÃO GRÁFICA
+========================================
+XDG_SESSION_TYPE : wayland
+XDG_CURRENT_DESKTOP: <vazio>
+WAYLAND_DISPLAY  : wayland-1
+DISPLAY (XWayland): <vazio — XWayland inativo>
+
+--- Portais XDG rodando
+org.freedesktop.impl.portal.PermissionStore                                                   843 xdg-permission- markinkkkkj :1.7          user@1000.service -       -
+org.freedesktop.impl.portal.desktop.gtk                                                       858 xdg-desktop-por markinkkkkj :1.9          user@1000.service -       -
+org.freedesktop.impl.portal.desktop.wlr                                                       893 xdg-desktop-por markinkkkkj :1.17         user@1000.service -       -
+org.freedesktop.portal.Desktop                                                                825 xdg-desktop-por markinkkkkj :1.6          user@1000.service -       -
+org.freedesktop.portal.Documents                                                              848 xdg-document-po markinkkkkj :1.8          user@1000.service -       -
+org.freedesktop.portal.Tracker                                                                  - -               -           (activatable) -                 -       -
+
+--- Agente polkit rodando
+(NENHUM agente polkit — sudo gráfico não vai funcionar)
+
+--- Daemon de notificação
+(NENHUM — notificações não aparecem)
+
+========================================
+  11. PACOTES-CHAVE: PRESENTE / AUSENTE
+========================================
+  [ok]     sof-firmware
+  [ok]     alsa-ucm-conf
+  [ok]     alsa-utils
+  [ok]     pipewire
+  [ok]     pipewire-pulse
+  [ok]     pipewire-alsa
+  [ok]     wireplumber
+  [ok]     pavucontrol
+  [ok]     intel-ucode
+  [ok]     linux-firmware
+  [ok]     mesa
+  [FALTA]  vulkan-intel
+  [FALTA]  intel-media-driver
+  [ok]     networkmanager
+  [FALTA]  bluez
+  [FALTA]  blueman
+  [FALTA]  xorg-xwayland
+  [ok]     xdg-desktop-portal
+  [ok]     xdg-desktop-portal-wlr
+  [ok]     xdg-desktop-portal-gtk
+  [ok]     polkit
+  [ok]     polkit-gnome
+  [FALTA]  gnome-keyring
+  [FALTA]  mako
+  [ok]     waybar
+  [ok]     foot
+  [ok]     wl-clipboard
+  [ok]     grim
+  [ok]     slurp
+  [FALTA]  brightnessctl
+  [FALTA]  gvfs
+  [FALTA]  gvfs-mtp
+  [FALTA]  udisks2
+  [FALTA]  udiskie
+  [FALTA]  thunar
+  [FALTA]  tumbler
+  [FALTA]  noto-fonts
+  [FALTA]  noto-fonts-emoji
+  [FALTA]  noto-fonts-cjk
+  [FALTA]  ttf-jetbrains-mono-nerd
+  [FALTA]  qt5ct
+  [FALTA]  qt6ct
+  [FALTA]  xdg-user-dirs
+  [ok]     xdg-utils
+  [ok]     shared-mime-info
+  [FALTA]  cups
+  [ok]     avahi
+  [FALTA]  nss-mdns
+  [FALTA]  ntfs-3g
+  [FALTA]  exfatprogs
+  [FALTA]  gst-plugins-good
+  [FALTA]  gst-plugin-pipewire
+  [ok]     ffmpeg
+  [ok]     git
+  [FALTA]  stow
+  [ok]     zram-generator
+
+========================================
+  12. SAÚDE DO SISTEMA
+========================================
+
+--- Unidades systemd falhando
+
+--- Unidades de usuário falhando
+
+--- Erros do boot atual (prioridade <=3)
+Jul 31 14:33:31 archlinux kernel: virt/tdx: TDX not supported by the host platform
+Jul 31 14:33:32 archlinux kernel: ACPI Error: Needed [Integer/String/Buffer], found [Package] 00000000359ad712 (20251212/exresop-469)
+Jul 31 14:33:32 archlinux kernel: ACPI Error: AE_AML_OPERAND_TYPE, While resolving operands for [ToHexString] (20251212/dswexec-433)
+Jul 31 14:33:32 archlinux kernel: ACPI Error: Aborting method \ADBG due to previous error (AE_AML_OPERAND_TYPE) (20251212/psparse-529)
+Jul 31 14:33:32 archlinux kernel: ACPI Error: Aborting method \_SB.HIDD._DSM due to previous error (AE_AML_OPERAND_TYPE) (20251212/psparse-529)
+
+========================================
+  13. LOCALE, TECLADO E FONTES
+========================================
+
+--- Locale
+System Locale: LANG=en_US.UTF-8
+    VC Keymap: us
+   X11 Layout: us
+    X11 Model: pc105+inet
+  X11 Options: terminate:ctrl_alt_bksp
+
+--- Emoji resolve para qual fonte?
+FreeSans.otf: "FreeSans" "Regular"
+
+--- Fonte monoespaçada padrão
+FreeMono.otf: "FreeMono" "Regular"
+
+--- Aplicativos padrão por tipo de arquivo
+application/pdf                -> zen.desktop
+image/png                      -> zen.desktop
+image/jpeg                     -> zen.desktop
+video/mp4                      ->
+audio/mpeg                     ->
+text/plain                     -> vim.desktop
+inode/directory                ->
+x-scheme-handler/https         -> zen.desktop
+application/zip                ->
+
+
+=== FIM DO RELATÓRIO ===
