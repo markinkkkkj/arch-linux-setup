@@ -395,6 +395,7 @@ pkgs_base=(
     waybar wofi foot
     wl-clipboard cliphist  # clipboard manager + history for Wayland
     grim slurp              # screenshot capture + region selector for wlroots compositors
+    xdg-user-dirs             # creates ~/Downloads, ~/Documents, ~/Pictures etc.; xdg-user-dirs-update (Prompt 3) depends on it
 )
 
 # Machine-specific drivers/microcode/firmware (see relato.txt).
@@ -407,7 +408,7 @@ pkgs_hardware=(
     fwupd                         # firmware update daemon (BIOS/EC updates via LVFS)
 )
 
-# Wayland session plumbing: X11 compat, portals, auth agent, keyring.
+# Wayland session plumbing: X11 compat, portals, auth agent, keyring, notifications.
 pkgs_session=(
     xorg-xwayland          # lets X11-only apps run inside the Sway session
     xdg-desktop-portal
@@ -415,6 +416,7 @@ pkgs_session=(
     xdg-desktop-portal-gtk    # file-picker etc. backend -- this is what browsers actually call
     polkit-gnome                # polkit authentication agent; none runs today, so graphical sudo prompts silently fail
     gnome-keyring                 # secret storage: browser passwords, SSH/GPG agent integration
+    mako                             # notification daemon; none runs today, so no low-battery/download-done popups. De facto standard for Sway. Prompt 4 adds its exec to the Sway config.
 )
 
 # Full PipeWire stack plus diagnostics and a volume control GUI.
