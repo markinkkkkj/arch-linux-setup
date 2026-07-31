@@ -673,6 +673,156 @@ run_system_config() {
 }
 
 # ---------------------------------------------------------------------------
+# Service enabling (Prompt 4) -- runs last, after packages and configuration.
+#
+# Every enable_* helper only acts on a service whose providing package is
+# actually installed. That's checked with `pacman -Qq`, the ground truth,
+# rather than only install_pkgs' FAILED_PKGS: FAILED_PKGS is empty on a
+# second run where nothing needed (re)installing, so it can't by itself
+# prove a package IS installed, only that it didn't fail THIS run. Already
+# enabled-and-active services are left alone, so re-running is a no-op.
+# ---------------------------------------------------------------------------
+
+# enable_service <unit> [pkg]
+#
+# Enables and starts a systemd service/timer/socket, but only if its
+# providing package is actually installed; skips (doesn't fail) otherwise.
+enable_service() {
+    local unit="$1" pkg="${2:-}"
+
+    if [[ -n "$pkg" ]] && ! pacman -Qq "$pkg" &>/dev/null; then
+        warn "Skipping $unit: package '$pkg' is not installed."
+        return 0
+    fi
+
+    if systemctl is-enabled --quiet "$unit" 2>/dev/null && systemctl is-active --quiet "$unit"; then
+        return 0
+    fi
+
+    if $DRY_RUN; then
+        info "[dry-run] would enable --now $unit"
+        return 0
+    fi
+
+    sudo systemctl enable --now "$unit"
+    success "Enabled $unit."
+}
+
+# TLP vs power-profiles-daemon conflict (CLAUDE.md rule 5): if PPD is
+# already active, refuse to also enable TLP instead of enabling both.
+enable_tlp_service() {
+    if ! pacman -Qq tlp &>/dev/null; then
+        return 0
+    fi
+
+    if systemctl is-active --quiet power-profiles-daemon.service; then
+        error "power-profiles-daemon.service is active -- refusing to also enable tlp.service (they conflict). Disable power-profiles-daemon first if you want TLP instead."
+        return 0
+    fi
+
+    enable_service tlp.service tlp
+}
+
+# Docker's group grants root-equivalent access to whoever is in it -- ask
+# before enabling the service, even though the package is already installed.
+enable_docker_service() {
+    if ! pacman -Qq docker &>/dev/null; then
+        return 0
+    fi
+
+    if systemctl is-enabled --quiet docker.service 2>/dev/null && systemctl is-active --quiet docker.service; then
+        return 0
+    fi
+
+    if ! confirm "Enable and start docker.service now?" "n"; then
+        info "docker.service left disabled."
+        return 0
+    fi
+
+    if $DRY_RUN; then
+        info "[dry-run] would enable --now docker.service"
+        return 0
+    fi
+
+    sudo systemctl enable --now docker.service
+    success "Enabled docker.service."
+}
+
+# PipeWire runs as user (not system) services -- only report on them here,
+# never alter them.
+check_pipewire_user_services() {
+    local units=(pipewire.service pipewire-pulse.service wireplumber.service) u
+
+    for u in "${units[@]}"; do
+        if systemctl --user is-active --quiet "$u" 2>/dev/null; then
+            success "User service $u is active."
+        else
+            warn "User service $u is not active."
+        fi
+    done
+}
+
+# Sway doesn't start any of these daemons on its own. Written to a separate
+# file instead of editing the actual Sway config directly, so it can be
+# reviewed and pasted in by hand.
+generate_sway_exec_snippet() {
+    local file="$SCRIPT_DIR/sway-exec-snippet.conf"
+
+    if $DRY_RUN; then
+        info "[dry-run] would write $file (exec lines for daemons that don't start on their own)"
+        return 0
+    fi
+
+    cat > "$file" <<'EOF'
+# Paste into your Sway config (e.g. dotfiles/sway/.config/sway/config).
+# None of these start on their own -- nothing execs them today.
+
+# Polkit authentication agent (graphical sudo/auth prompts).
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+
+# Notification daemon.
+exec mako
+
+# Automount for removable devices (USB drives, SD cards).
+exec udiskie --tray
+
+# Network and Bluetooth tray applets (network-manager-applet and blueman,
+# both in pkgs_network).
+exec nm-applet --indicator
+exec blueman-applet
+
+# Clipboard history, persisted via cliphist (wl-clipboard/cliphist already
+# installed).
+exec wl-paste --type text --watch cliphist store
+exec wl-paste --type image --watch cliphist store
+
+# Output/display layout profiles (e.g. auto-switching when a monitor is
+# plugged in).
+exec kanshi
+
+# Automatic color temperature by time of day.
+exec gammastep
+EOF
+
+    success "Wrote $file -- paste into your Sway config."
+}
+
+run_enable_services() {
+    enable_service NetworkManager.service networkmanager
+    enable_service bluetooth.service bluez
+    enable_service cups.socket cups
+    enable_service avahi-daemon.service avahi
+    enable_tlp_service
+    enable_service thermald.service thermald
+    enable_service fstrim.timer
+    enable_service ufw.service ufw
+    enable_service paccache.timer pacman-contrib
+    enable_docker_service
+    check_pipewire_user_services
+    generate_sway_exec_snippet
+}
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -716,6 +866,7 @@ pkgs_base=(
     wl-clipboard cliphist  # clipboard manager + history for Wayland
     grim slurp              # screenshot capture + region selector for wlroots compositors
     xdg-user-dirs             # creates ~/Downloads, ~/Documents, ~/Pictures etc.; xdg-user-dirs-update (Prompt 3) depends on it
+    kanshi gammastep             # output/display layout profiles + auto color temperature; execs added in Prompt 4's sway-exec-snippet.conf
 )
 
 # Machine-specific drivers/microcode/firmware (see relato.txt).
@@ -747,11 +898,13 @@ pkgs_audio=(
     pavucontrol       # GUI volume/routing control
 )
 
-# Wi-Fi already works out of the box; this group covers what doesn't: Bluetooth.
+# Wi-Fi already works out of the box; this group covers what doesn't:
+# Bluetooth, a firewall, and the tray applets Prompt 4's exec snippet needs.
 pkgs_network=(
-    networkmanager   # already active; listed for idempotency/completeness
+    networkmanager network-manager-applet  # already active; applet gives a tray icon (nm-applet)
     bluez bluez-utils  # Bluetooth stack + bluetoothctl -- radio exists but nothing is installed today
-    blueman              # GUI Bluetooth manager
+    blueman              # GUI Bluetooth manager + tray applet (blueman-applet)
+    ufw                     # firewall; Prompt 4 enables ufw.service (rules/policy are not configured here)
 )
 
 # Latin + CJK + emoji coverage, a Nerd Font, and Microsoft-metric-compatible fonts.
@@ -801,6 +954,8 @@ pkgs_codecs=(
 # Local network printing.
 pkgs_printing=(
     cups
+    avahi      # was already present at audit time, but not declared anywhere -- needed for
+               # avahi-daemon.service (Prompt 4) and for nss-mdns to have anything to talk to
     nss-mdns  # resolves .local mDNS hostnames via avahi, needed to discover network printers
 )
 
@@ -818,6 +973,7 @@ pkgs_dev=(
     docker docker-compose
     nodejs npm python jdk-openjdk  # jdk-openjdk: needed by Android/Gradle-based toolchains
     stow                              # dotfiles management (Prompt 5)
+    pacman-contrib                       # provides paccache, needed for paccache.timer (Prompt 4)
 )
 
 # AUR packages, installed via yay.
@@ -850,6 +1006,12 @@ if group_enabled "config"; then
     run_system_config
 else
     info "Group 'config' skipped by --only/--skip."
+fi
+
+if group_enabled "services"; then
+    run_enable_services
+else
+    info "Group 'services' skipped by --only/--skip."
 fi
 
 if [[ ${#FAILED_PKGS[@]} -gt 0 ]]; then
