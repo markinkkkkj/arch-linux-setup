@@ -66,8 +66,18 @@ not be touched by this script.
   `check_yay` handles this).
 - **Dotfiles:** managed with GNU Stow (`stow` package **missing** today).
 - **Locale:** `en_US.UTF-8` already configured. **Note:** console and X11
-  keyboard are still set to `us`, but the machine is ABNT2 — needs to become
-  `br-abnt2`.
+  keyboard are still set to `us`, but the machine is ABNT2. **Known ThinkPad
+  quirk:** the "/" and "?" key on this ThinkPad's ABNT2 keyboard reports a
+  different scancode than a regular ABNT2 keyboard, and there is no
+  ThinkPad-aware console (`kbd`) keymap to fix it (only `br-abnt`,
+  `br-abnt2`, `br-latin1-abnt2`, `br-latin1-us` exist — confirmed via
+  `find /usr/share/kbd/keymaps -iname '*br*'`). The fix only exists at the
+  XKB level: `localectl list-x11-keymap-variants br` lists `thinkpad` and
+  `thinkpad_nodeadkeys`. Decision: leave the TTY console keymap as `us`
+  (untouched) and apply `xkb_layout br` / `xkb_variant thinkpad` only inside
+  the Sway session (see `install.sh`'s `config_keyboard`, which writes a
+  `sway-keyboard-snippet.conf` to paste into the Sway config instead of
+  editing `/etc/vconsole.conf`).
 - **zram:** 4 GB already configured (`zram-generator` installed, `/dev/zram0`
   active).
 

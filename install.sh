@@ -111,14 +111,18 @@ group_enabled() {
 confirm() {
     local prompt="$1" default="${2:-n}" reply hint
 
-    if $ASSUME_YES; then
-        return 0
-    fi
-
     [[ "$default" == "y" ]] && hint="[Y/n]" || hint="[y/N]"
 
-    read -r -p "$prompt $hint " reply
-    reply="${reply:-$default}"
+    if $ASSUME_YES; then
+        reply="$default"
+    elif [[ -t 0 ]]; then
+        read -r -p "$prompt $hint " reply
+        reply="${reply:-$default}"
+    else
+        warn "No interactive terminal to ask \"$prompt\" -- using the default (${default})."
+        reply="$default"
+    fi
+
     [[ "$reply" =~ ^[Yy]$ ]]
 }
 
@@ -353,6 +357,322 @@ run_group() {
 }
 
 # ---------------------------------------------------------------------------
+# System configuration (Prompt 3) -- runs once packages are installed.
+#
+# Every step here must be idempotent: running install.sh twice must not
+# duplicate a line or clobber hand-made customization. Any /etc file edited
+# in place goes through backup_etc_file() first. /etc/fstab, /boot, and
+# anything bootloader-related are never touched here.
+# ---------------------------------------------------------------------------
+
+# backup_etc_file <file>
+#
+# Copies <file> to <file>.bak-YYYYMMDD if it exists and hasn't already been
+# backed up today (so re-running the script the same day doesn't overwrite
+# the pre-install snapshot with an already-modified version).
+backup_etc_file() {
+    local file="$1"
+
+    [[ -f "$file" ]] || return 0
+
+    local backup="${file}.bak-$(date +%Y%m%d)"
+    [[ -e "$backup" ]] && return 0
+
+    if $DRY_RUN; then
+        info "[dry-run] would back up $file to $backup"
+        return 0
+    fi
+
+    sudo cp -a "$file" "$backup"
+}
+
+# 1. Keyboard -- this machine has an ABNT2 keyboard, but there is no console
+# (kbd) keymap for this ThinkPad's known ABNT2 quirk (the "/" and "?" key
+# reports a different scancode than a regular ABNT2 keyboard). The available
+# console keymaps are only br-abnt, br-abnt2, br-latin1-abnt2, br-latin1-us
+# -- none ThinkPad-aware. The fix only exists at the XKB level: `localectl
+# list-x11-keymap-variants br` lists "thinkpad" and "thinkpad_nodeadkeys".
+# So: the TTY keymap is deliberately left as "us" (untouched), and the
+# br/thinkpad layout is applied only inside the Sway (Wayland) session, via
+# a snippet to review and paste in yourself -- same pattern as Prompt 4's
+# exec snippet, since this repo doesn't own your actual Sway config.
+config_keyboard() {
+    local file="$SCRIPT_DIR/sway-keyboard-snippet.conf"
+
+    if $DRY_RUN; then
+        info "[dry-run] would write $file (Sway XKB config: br/thinkpad)"
+        return 0
+    fi
+
+    cat > "$file" <<'EOF'
+# Paste into your Sway config (e.g. dotfiles/sway/.config/sway/config).
+#
+# The console (TTY) keymap is deliberately left as "us": there is no
+# console (kbd) keymap that accounts for this ThinkPad's ABNT2 quirk ("/"
+# and "?" end up wrong/missing), and forcing br-abnt2 there is known to
+# break exactly those two keys on this hardware. The "thinkpad" XKB
+# variant (confirmed available via `localectl list-x11-keymap-variants
+# br`) fixes it at the Wayland/XKB level instead. Use
+# xkb_variant thinkpad_nodeadkeys if you'd rather not have dead keys for
+# accents.
+input type:keyboard {
+    xkb_layout br
+    xkb_variant thinkpad
+}
+EOF
+
+    success "Wrote $file -- paste it into your Sway config. Console (TTY) keymap left as 'us'."
+}
+
+# 2. Wayland environment variables -- read by the systemd user manager via
+# pam_systemd at login, i.e. before Sway starts from the TTY, not just inside
+# the running session. XDG_CURRENT_DESKTOP is what makes the XDG portals pick
+# the right backend (it's empty today).
+config_wayland_env() {
+    local dir="$HOME/.config/environment.d"
+    local file="$dir/10-wayland-native.conf"
+
+    if $DRY_RUN; then
+        info "[dry-run] would write $file (native Wayland env vars + XDG_CURRENT_DESKTOP=sway)"
+        return 0
+    fi
+
+    mkdir -p "$dir"
+    cat > "$file" <<'EOF'
+# Managed by install.sh -- native Wayland for Firefox/Zen, Qt, Electron, SDL,
+# and the standard Java AWT/Swing fix for tiling window managers.
+MOZ_ENABLE_WAYLAND=1
+QT_QPA_PLATFORM=wayland
+ELECTRON_OZONE_PLATFORM_HINT=wayland
+SDL_VIDEODRIVER=wayland
+_JAVA_AWT_WM_NONREPARENTING=1
+XDG_CURRENT_DESKTOP=sway
+EOF
+
+    success "Wrote $file."
+}
+
+# 3. Portal backend selection -- GTK backend doesn't implement ScreenCast or
+# Screenshot for wlroots compositors, only the wlr backend does; everything
+# else (notably the file picker) goes through gtk.
+config_portals() {
+    local dir="$HOME/.config/xdg-desktop-portal"
+    local file="$dir/sway-portals.conf"
+
+    if $DRY_RUN; then
+        info "[dry-run] would write $file (screencast/screenshot via wlr, everything else via gtk)"
+        return 0
+    fi
+
+    mkdir -p "$dir"
+    cat > "$file" <<'EOF'
+[preferred]
+default=gtk
+org.freedesktop.impl.portal.ScreenCast=wlr
+org.freedesktop.impl.portal.Screenshot=wlr
+EOF
+
+    success "Wrote $file."
+}
+
+# 4. mDNS hostname resolution -- needed to discover network printers via
+# avahi/CUPS. Inserted right before the "files" token if present, otherwise
+# appended to the hosts line; never duplicated on re-runs.
+config_nsswitch() {
+    local file="/etc/nsswitch.conf"
+
+    if grep -qE "^hosts:.*mdns_minimal" "$file" 2>/dev/null; then
+        return 0
+    fi
+
+    if $DRY_RUN; then
+        info "[dry-run] would add mdns_minimal to the hosts line in $file"
+        return 0
+    fi
+
+    backup_etc_file "$file"
+
+    if grep -qE '^hosts:.*\bfiles\b' "$file"; then
+        sudo sed -i -E '/^hosts:/ s/\bfiles\b/mdns_minimal [NOTFOUND=return] files/' "$file"
+    else
+        sudo sed -i -E '/^hosts:/ s/$/ mdns_minimal [NOTFOUND=return]/' "$file"
+    fi
+
+    success "Added mdns_minimal to the hosts line in $file."
+}
+
+# 5. User groups -- video/input for the session, docker only if it actually
+# got installed. Only touches the account if something is actually missing,
+# so the "log out" warning doesn't nag on every run.
+config_user_groups() {
+    local want=(video input) g current missing=()
+
+    if command -v docker >/dev/null 2>&1; then
+        want+=(docker)
+    fi
+
+    current=" $(id -nG "$USER") "
+    for g in "${want[@]}"; do
+        [[ "$current" == *" $g "* ]] || missing+=("$g")
+    done
+
+    [[ ${#missing[@]} -eq 0 ]] && return 0
+
+    if $DRY_RUN; then
+        info "[dry-run] would add $USER to groups: ${missing[*]}"
+        return 0
+    fi
+
+    sudo usermod -aG "$(IFS=,; echo "${missing[*]}")" "$USER"
+    warn "Added $USER to groups: ${missing[*]}. Log out and back in for this to take effect."
+}
+
+# 6. Standard XDG user directories (~/Downloads, ~/Documents, ~/Pictures, ...).
+config_xdg_user_dirs() {
+    if ! command -v xdg-user-dirs-update >/dev/null 2>&1; then
+        warn "xdg-user-dirs-update not found (xdg-user-dirs package missing?) -- skipping."
+        return 0
+    fi
+
+    if $DRY_RUN; then
+        info "[dry-run] would run xdg-user-dirs-update"
+        return 0
+    fi
+
+    xdg-user-dirs-update
+    success "Standard home directories created/updated."
+}
+
+# 7. Default applications -- today almost everything either opens in the
+# browser or has no handler at all. Only takes over a MIME type if it's
+# currently unset or pointing at whatever the browser currently is, so any
+# deliberate hand-made choice is left alone. "The browser" is resolved live
+# via the current https handler rather than hardcoded to zen.desktop/
+# firefox.desktop, since that default can legitimately change over time.
+ensure_mime_default() {
+    local mime="$1" desktop="$2" browser="${3:-}" current
+    current="$(xdg-mime query default "$mime" 2>/dev/null || true)"
+
+    if [[ -n "$current" && "$current" != "$browser" ]]; then
+        return 0
+    fi
+
+    if $DRY_RUN; then
+        info "[dry-run] would set default handler for $mime to $desktop"
+        return 0
+    fi
+
+    xdg-mime default "$desktop" "$mime"
+}
+
+config_default_apps() {
+    if ! command -v xdg-mime >/dev/null 2>&1; then
+        warn "xdg-mime not found -- skipping default application setup."
+        return 0
+    fi
+
+    local browser
+    browser="$(xdg-mime query default x-scheme-handler/https 2>/dev/null || true)"
+
+    ensure_mime_default "application/pdf" "org.pwmt.zathura.desktop" "$browser"
+    ensure_mime_default "image/png" "imv.desktop" "$browser"
+    ensure_mime_default "image/jpeg" "imv.desktop" "$browser"
+    ensure_mime_default "video/mp4" "mpv.desktop" "$browser"
+    ensure_mime_default "audio/mpeg" "mpv.desktop" "$browser"
+    ensure_mime_default "text/plain" "code.desktop" "$browser"
+    ensure_mime_default "inode/directory" "thunar.desktop" "$browser"
+    ensure_mime_default "application/zip" "xarchiver.desktop" "$browser"
+
+    # http/https: never overridden if something is already set (whatever
+    # that is IS the intended browser); only filled in if totally unset.
+    ensure_mime_default "x-scheme-handler/http" "${browser:-zen.desktop}" ""
+    ensure_mime_default "x-scheme-handler/https" "${browser:-zen.desktop}" ""
+
+    success "Default applications configured for common MIME types."
+}
+
+# 8. pacman.conf niceties -- Color/ParallelDownloads/VerbosePkgLists are safe
+# to just turn on; multilib changes what repos are available, so ask first.
+config_pacman_conf() {
+    local file="/etc/pacman.conf"
+    local already_ok=true
+
+    grep -qE '^Color$' "$file" || already_ok=false
+    grep -qE '^ParallelDownloads' "$file" || already_ok=false
+    grep -qE '^VerbosePkgLists$' "$file" || already_ok=false
+
+    if ! $already_ok; then
+        if $DRY_RUN; then
+            info "[dry-run] would enable Color/ParallelDownloads/VerbosePkgLists in $file"
+        else
+            backup_etc_file "$file"
+            sudo sed -i \
+                -e 's/^#Color$/Color/' \
+                -e 's/^#ParallelDownloads/ParallelDownloads/' \
+                -e 's/^#VerbosePkgLists$/VerbosePkgLists/' \
+                "$file"
+            success "Enabled Color, ParallelDownloads and VerbosePkgLists in $file."
+        fi
+    fi
+
+    if grep -qE '^\[multilib\]$' "$file" 2>/dev/null; then
+        return 0
+    fi
+
+    if ! confirm "Enable the [multilib] repository in $file (32-bit libraries, e.g. Wine/Steam)?" "n"; then
+        info "multilib left disabled."
+        return 0
+    fi
+
+    if $DRY_RUN; then
+        info "[dry-run] would enable [multilib] in $file"
+        return 0
+    fi
+
+    backup_etc_file "$file"
+    sudo sed -i '/^#\[multilib\]$/,+1 s/^#//' "$file"
+    success "Enabled [multilib] in $file (run 'sudo pacman -Sy' before installing from it)."
+}
+
+# 9. Cap battery charging at 80% via TLP -- health is already at ~82% of
+# design capacity. Uses a dedicated drop-in instead of editing the (not yet
+# installed) main tlp.conf, so this is a plain idempotent overwrite.
+config_battery_limit() {
+    local dir="/etc/tlp.d"
+    local file="$dir/battery-charge-limit.conf"
+
+    if grep -q "^STOP_CHARGE_THRESH_BAT0=80$" "$file" 2>/dev/null; then
+        return 0
+    fi
+
+    if $DRY_RUN; then
+        info "[dry-run] would write $file (cap battery charge at 80%)"
+        return 0
+    fi
+
+    sudo mkdir -p "$dir"
+    sudo tee "$file" >/dev/null <<'EOF'
+# Managed by install.sh -- battery health is already at ~82%, cap charging
+# at 80% to slow further degradation.
+STOP_CHARGE_THRESH_BAT0=80
+EOF
+
+    success "Capped battery charge at 80% in $file (takes effect once tlp is enabled, see Prompt 4)."
+}
+
+run_system_config() {
+    config_keyboard
+    config_wayland_env
+    config_portals
+    config_nsswitch
+    config_user_groups
+    config_xdg_user_dirs
+    config_default_apps
+    config_pacman_conf
+    config_battery_limit
+}
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -525,6 +845,12 @@ GROUP_ORDER=(
 for group in "${GROUP_ORDER[@]}"; do
     run_group "$group"
 done
+
+if group_enabled "config"; then
+    run_system_config
+else
+    info "Group 'config' skipped by --only/--skip."
+fi
 
 if [[ ${#FAILED_PKGS[@]} -gt 0 ]]; then
     warn "The following packages were not installed:"
