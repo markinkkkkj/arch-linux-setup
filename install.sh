@@ -510,8 +510,15 @@ pkgs_aur=(
                    # the macOS filesystem
 )
 
+# NOT alphabetical/arbitrary: "audio" must install before "base". waybar (in
+# "base") pulls in a virtual "jack" provider dependency; under --noconfirm,
+# pacman would resolve that implicitly to whatever provider it defaults to
+# before "audio" gets a chance to explicitly install pipewire-jack -- risking
+# jack2 landing on a clean install and an unrecoverable conflict in
+# non-interactive mode. Installing "audio" first satisfies that dependency
+# with the right provider up front.
 GROUP_ORDER=(
-    base hardware session audio network fonts theme files
+    audio base hardware session network fonts theme files
     apps codecs printing power dev aur
 )
 
