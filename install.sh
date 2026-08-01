@@ -19,6 +19,7 @@ error()   { echo -e "${RED}[✗]$1${NC}"; }
 
 DRY_RUN=false
 ASSUME_YES=false
+RUN_DOTFILES=false
 ONLY_GROUPS=()
 SKIP_GROUPS=()
 FAILED_PKGS=()
@@ -60,6 +61,7 @@ Options:
   --dry-run              Show what would be done, without installing or changing anything.
   --only=GROUP[,GROUP..] Run only the given groups.
   --skip=GROUP[,GROUP..] Skip the given groups.
+  --dotfiles             Also apply the repo's dotfiles with GNU Stow (runs dotfiles.sh).
   --yes                  Don't ask anything; assume the default answer for every prompt.
   --help                 Show this help and exit.
 EOF
@@ -72,6 +74,7 @@ parse_args() {
             --dry-run) DRY_RUN=true ;;
             --only=*) IFS=',' read -r -a ONLY_GROUPS <<< "${arg#--only=}" ;;
             --skip=*) IFS=',' read -r -a SKIP_GROUPS <<< "${arg#--skip=}" ;;
+            --dotfiles) RUN_DOTFILES=true ;;
             --yes) ASSUME_YES=true ;;
             --help) usage; exit 0 ;;
             *)
@@ -1012,6 +1015,16 @@ if group_enabled "services"; then
     run_enable_services
 else
     info "Group 'services' skipped by --only/--skip."
+fi
+
+if $RUN_DOTFILES; then
+    if $DRY_RUN; then
+        info "[dry-run] would run $SCRIPT_DIR/dotfiles.sh"
+    else
+        dotfiles_args=()
+        $ASSUME_YES && dotfiles_args+=(--yes)
+        "$SCRIPT_DIR/dotfiles.sh" "${dotfiles_args[@]}"
+    fi
 fi
 
 if [[ ${#FAILED_PKGS[@]} -gt 0 ]]; then
