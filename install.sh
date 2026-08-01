@@ -411,6 +411,7 @@ pkgs_audio=(
     wireplumber   # session/policy manager for PipeWire
     alsa-utils      # aplay/amixer, useful for diagnosing the SOF setup
     pavucontrol       # GUI volume/routing control
+    playerctl           # media keys (XF86AudioNext/Prev/Play) in the sway config
 )
 
 # Wi-Fi already works out of the box; this group covers what doesn't:
@@ -452,7 +453,8 @@ pkgs_files=(
 # Zen (AUR, pkgs_aur) can break on update. Programming editor is VS Code
 # (pkgs_aur), not duplicated here.
 pkgs_apps=(
-    zathura zathura-pdf-mupdf  # PDF
+    evince                     # PDF
+    gpu-screen-recorder        # screen recording (F10 keybind / record.sh in the sway dotfiles)
     imv                           # image viewer (Wayland-native)
     mpv                             # video and audio playback
     xarchiver zip unzip p7zip         # compressed archives: GUI + CLI backends
@@ -495,6 +497,7 @@ pkgs_dev=(
 pkgs_aur=(
     zen-browser-bin
     visual-studio-code-bin
+    bibata-cursor-theme-bin  # cursor theme referenced by the GTK dotfiles (Bibata-Modern-Classic)
     apfs-fuse-git  # read-only FUSE driver for the macOS APFS partition -- no
                    # official-repo APFS support exists; deliberately not the
                    # write-capable linux-apfs-rw-dkms-git, to avoid risking
@@ -731,7 +734,7 @@ config_default_apps() {
     local browser
     browser="$(xdg-mime query default x-scheme-handler/https 2>/dev/null || true)"
 
-    ensure_mime_default "application/pdf" "org.pwmt.zathura.desktop" "$browser"
+    ensure_mime_default "application/pdf" "org.gnome.Evince.desktop" "$browser"
     ensure_mime_default "image/png" "imv.desktop" "$browser"
     ensure_mime_default "image/jpeg" "imv.desktop" "$browser"
     ensure_mime_default "video/mp4" "mpv.desktop" "$browser"

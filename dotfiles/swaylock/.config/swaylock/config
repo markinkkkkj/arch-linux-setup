@@ -1,0 +1,36 @@
+# swaylock -- minimal monochrome: dark-gray background, discreet indicator.
+# One option per line, same names as the CLI flags without the leading "--".
+
+ignore-empty-password
+show-failed-attempts
+daemonize
+
+color=1a1a1a
+font=JetBrainsMono Nerd Font
+
+indicator-radius=70
+indicator-thickness=8
+
+# Idle / typing
+inside-color=000000cc
+ring-color=444444
+line-color=00000000
+separator-color=00000000
+text-color=ffffff
+key-hl-color=aaaaaa
+bs-hl-color=666666
+
+# Cleared
+inside-clear-color=222222cc
+ring-clear-color=888888
+text-clear-color=ffffff
+
+# Verifying
+inside-ver-color=222222cc
+ring-ver-color=bbbbbb
+text-ver-color=ffffff
+
+# Wrong password -- still monochrome: the ring flips to solid white.
+inside-wrong-color=222222cc
+ring-wrong-color=ffffff
+text-wrong-color=ffffff

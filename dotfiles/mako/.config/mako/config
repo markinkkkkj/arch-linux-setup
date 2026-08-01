@@ -1,0 +1,19 @@
+# mako -- rewritten from scratch (the old one was Catppuccin). Monochrome:
+# black background, white text, gray border.
+
+font=JetBrainsMono Nerd Font 10
+background-color=#000000
+text-color=#ffffff
+border-color=#444444
+border-size=2
+border-radius=0
+padding=10
+margin=8
+width=340
+height=120
+default-timeout=5000
+anchor=top-right
+
+[urgency=high]
+border-color=#ffffff
+default-timeout=0

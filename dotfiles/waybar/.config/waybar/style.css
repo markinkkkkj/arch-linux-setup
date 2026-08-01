@@ -1,0 +1,62 @@
+/* Waybar -- monochrome: black bar, gray inactive, white active. Alerts use
+ * inverse video (white background) instead of accent colors. */
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 12px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: #000000;
+    color: #ffffff;
+    border-bottom: 1px solid #333333;
+}
+
+#workspaces button {
+    padding: 0 10px;
+    background-color: transparent;
+    color: #777777;
+}
+
+#workspaces button.focused {
+    background-color: #222222;
+    color: #ffffff;
+}
+
+#workspaces button.urgent {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+#clock,
+#pulseaudio,
+#network,
+#battery,
+#tray {
+    padding: 0 12px;
+    color: #cccccc;
+}
+
+#clock {
+    color: #ffffff;
+}
+
+#battery.warning {
+    color: #ffffff;
+}
+
+#battery.critical {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+#network.disconnected {
+    color: #777777;
+}
+
+#pulseaudio.muted {
+    color: #777777;
+}

@@ -1,0 +1,6 @@
+# swayidle -- deliberately minimal. The ONLY automatic behavior is locking
+# before the system sleeps. There is NO inactivity timeout and NO dpms/
+# screen-off rule on purpose: the screen never turns off by idleness.
+# (Launched from the sway config as: exec swayidle -w)
+
+before-sleep 'swaylock -f'

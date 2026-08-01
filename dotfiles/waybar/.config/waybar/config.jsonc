@@ -1,0 +1,49 @@
+// Waybar -- written from scratch, minimal and monochrome. Text only, no
+// icon soup: workspaces / clock / volume, network, battery, tray.
+{
+    "layer": "top",
+    "position": "top",
+    "height": 28,
+    "spacing": 0,
+
+    "modules-left": ["sway/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right": ["pulseaudio", "network", "battery", "tray"],
+
+    "sway/workspaces": {
+        "format": "{name}",
+        "disable-scroll": false
+    },
+
+    "clock": {
+        "format": "{:%a %d %b  %H:%M}",
+        "tooltip-format": "{:%Y-%m-%d}"
+    },
+
+    "pulseaudio": {
+        "format": "vol {volume}%",
+        "format-muted": "vol mute",
+        "on-click": "pavucontrol",
+        "tooltip": false
+    },
+
+    "network": {
+        "format-wifi": "{essid}",
+        "format-ethernet": "eth",
+        "format-disconnected": "offline",
+        "tooltip-format": "{ifname} {ipaddr}"
+    },
+
+    "battery": {
+        "format": "bat {capacity}%",
+        "format-charging": "chr {capacity}%",
+        "states": {
+            "warning": 20,
+            "critical": 10
+        }
+    },
+
+    "tray": {
+        "spacing": 8
+    }
+}

@@ -1,0 +1,46 @@
+/* wofi -- monochrome: black background, gray borders/selection, white text. */
+
+window {
+    background-color: #000000;
+    border: 2px solid #444444;
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 13px;
+}
+
+#input {
+    background-color: #111111;
+    color: #ffffff;
+    border: 1px solid #333333;
+    border-radius: 0;
+    margin: 8px;
+    padding: 6px;
+}
+
+#input:focus {
+    border-color: #666666;
+}
+
+#inner-box,
+#outer-box {
+    background-color: #000000;
+    color: #cccccc;
+}
+
+#scroll {
+    margin: 0 8px 8px 8px;
+}
+
+#entry {
+    padding: 6px;
+    color: #cccccc;
+    background-color: transparent;
+}
+
+#entry:selected {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+#text:selected {
+    color: #ffffff;
+}
