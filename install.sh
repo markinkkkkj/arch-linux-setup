@@ -205,11 +205,26 @@ check_repo() {
     fi
 }
 
+# A single network blip used to abort the whole run (a 30-minute install is
+# a long time to lose to one dropped packet), so retry up to 3 times with a
+# growing wait: 2s after the first failure, 4s after the second.
 check_internet() {
-    if ! curl -fsS --max-time 5 -o /dev/null "https://archlinux.org"; then
-        error "No internet connection (failed to reach https://archlinux.org)."
-        exit 1
-    fi
+    local attempt delay=2
+
+    for attempt in 1 2 3; do
+        if curl -fsS --max-time 5 -o /dev/null "https://archlinux.org"; then
+            return 0
+        fi
+
+        if [[ $attempt -lt 3 ]]; then
+            warn "Could not reach https://archlinux.org (attempt ${attempt}/3), retrying in ${delay}s..."
+            sleep "$delay"
+            delay=$((delay * 2))
+        fi
+    done
+
+    error "No internet connection (failed to reach https://archlinux.org after 3 attempts)."
+    exit 1
 }
 
 check_pacman() {
