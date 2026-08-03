@@ -671,7 +671,13 @@ config_user_groups() {
         want+=(docker)
     fi
 
-    current=" $(id -nG "$USER") "
+    # `id -un` rather than $USER: the variable is set by login shells and PAM,
+    # but not by every context this can run from (docker exec, su -c, cron),
+    # and an unbound $USER aborts the whole script under `set -u`.
+    local user
+    user="$(id -un)"
+
+    current=" $(id -nG "$user") "
     for g in "${want[@]}"; do
         [[ "$current" == *" $g "* ]] || missing+=("$g")
     done
@@ -679,12 +685,12 @@ config_user_groups() {
     [[ ${#missing[@]} -eq 0 ]] && return 0
 
     if $DRY_RUN; then
-        info "[dry-run] would add $USER to groups: ${missing[*]}"
+        info "[dry-run] would add $user to groups: ${missing[*]}"
         return 0
     fi
 
-    sudo usermod -aG "$(IFS=,; echo "${missing[*]}")" "$USER"
-    warn "Added $USER to groups: ${missing[*]}. Log out and back in for this to take effect."
+    sudo usermod -aG "$(IFS=,; echo "${missing[*]}")" "$user"
+    warn "Added $user to groups: ${missing[*]}. Log out and back in for this to take effect."
 }
 
 # 6. Standard XDG user directories (~/Downloads, ~/Documents, ~/Pictures, ...).

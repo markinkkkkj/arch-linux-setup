@@ -152,6 +152,15 @@ list_packages() {
 # link but whose target already exists in $HOME as something we don't own
 # (a real file, or a symlink pointing outside the stow dir). Directories
 # existing along the way are not conflicts -- stow merges into them.
+#
+# The target is ALWAYS resolved with readlink -f, never just tested with
+# -L. Under stow's "tree folding" a whole directory is linked
+# (~/.config/sway -> STOW_DIR/sway/.config/sway), so ~/.config/sway/config
+# is a real file reached THROUGH a symlinked parent: -L is false for it,
+# yet it is already ours. Treating it as a conflict made a second run move
+# the file out of the repository and into the backup, emptying the stow
+# package. readlink -f canonicalizes every path component, so one check
+# covers the direct-symlink and folded-parent cases alike.
 find_conflicts() {
     local pkg="$1" rel target resolved
 
@@ -161,12 +170,10 @@ find_conflicts() {
 
         [[ -e "$target" || -L "$target" ]] || continue
 
-        if [[ -L "$target" ]]; then
-            resolved="$(readlink -f "$target" 2>/dev/null || true)"
-            case "$resolved" in
-                "$STOW_DIR"/*) continue ;;  # already ours
-            esac
-        fi
+        resolved="$(readlink -f "$target" 2>/dev/null || true)"
+        case "$resolved" in
+            "$STOW_DIR"/*) continue ;;  # already ours
+        esac
 
         printf '%s\n' "$rel"
     done
@@ -178,8 +185,19 @@ find_conflicts() {
 # $BACKUP_DIR, preserving its relative path, and records it for the final
 # report.
 backup_conflicts() {
-    local rel
+    local rel resolved
     for rel in "$@"; do
+        # Belt and braces: never move anything that lives inside the stow
+        # directory. find_conflicts already filters these out, but a bug
+        # there would otherwise gut the repository, so refuse here too.
+        resolved="$(readlink -f "$TARGET_DIR/$rel" 2>/dev/null || true)"
+        case "$resolved" in
+            "$STOW_DIR"/*)
+                warn "Refusing to back up '$rel': it resolves inside $STOW_DIR (already stowed)."
+                continue
+                ;;
+        esac
+
         mkdir -p "$BACKUP_DIR/$(dirname "$rel")"
         mv "$TARGET_DIR/$rel" "$BACKUP_DIR/$rel"
         MOVED_FILES+=("$rel")
