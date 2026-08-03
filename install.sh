@@ -1252,10 +1252,15 @@ doctor_dotfiles() {
     fi
 
     # For each stow package that actually has content, every one of its
-    # files must be a symlink in $HOME resolving into the repo's dotfiles/.
-    # Empty skeleton packages don't count either way.
+    # files must reach the repo's dotfiles/ through the filesystem. A file
+    # counts as applied if IT is a symlink into dotfiles/ OR any parent
+    # directory on its path is one -- stow's "tree folding" links a whole
+    # directory (e.g. ~/.config/foot -> dotfiles/foot/.config/foot), leaving
+    # the files inside it as real files behind a dir symlink. readlink -f
+    # canonicalizes every path component, so one resolution covers both
+    # cases. Empty skeleton packages don't count either way.
     local stow_dir="$SCRIPT_DIR/dotfiles"
-    local pkg pkg_name rel target applied files=() unapplied=()
+    local pkg pkg_name rel resolved applied files=() unapplied=()
     local content_pkgs=0
 
     for pkg in "$stow_dir"/*/; do
@@ -1268,12 +1273,10 @@ doctor_dotfiles() {
 
         applied=true
         for rel in "${files[@]}"; do
-            target="$HOME/$rel"
-            if [[ -L "$target" ]]; then
-                case "$(readlink -f "$target" 2>/dev/null || true)" in
-                    "$stow_dir"/*) continue ;;
-                esac
-            fi
+            resolved="$(readlink -f "$HOME/$rel" 2>/dev/null || true)"
+            case "$resolved" in
+                "$stow_dir"/*) continue ;;
+            esac
             applied=false
             break
         done
